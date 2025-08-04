@@ -2,6 +2,18 @@ import { execSync } from "node:child_process";
 import net from "node:net";
 import os from "node:os";
 
+// Use a proper logger if available, fallback to console
+const logger = {
+  info: (msg: string) => console.log(`[BrowserMCP] ${msg}`),
+  warn: (msg: string) => console.warn(`[BrowserMCP] ${msg}`),
+  error: (msg: string, error?: any) => console.error(`[BrowserMCP] ${msg}`, error || ''),
+  debug: (msg: string) => {
+    if (process.env.DEBUG || process.env.NODE_ENV === 'development') {
+      console.log(`[BrowserMCP:DEBUG] ${msg}`);
+    }
+  }
+};
+
 /**
  * Detects the current shell environment
  */
@@ -54,7 +66,7 @@ export async function isPortInUse(port: number): Promise<boolean> {
 export function killProcessOnPort(port: number) {
   try {
     const shellEnv = detectShellEnvironment();
-    console.log(`Detected shell environment: ${shellEnv}`);
+    logger.debug(`Detected shell environment: ${shellEnv}`);
     
     switch (shellEnv) {
       case "unix":
@@ -87,7 +99,7 @@ export function killProcessOnPort(port: number) {
                 } catch {}
               });
           } catch {
-            console.warn(`Could not kill process on port ${port} in Git Bash/WSL environment`);
+            logger.warn(`Could not kill process on port ${port} in Git Bash/WSL environment`);
           }
         }
         break;
@@ -95,11 +107,11 @@ export function killProcessOnPort(port: number) {
       case "powershell":
         // PowerShell
         try {
-          const psCommand = `Get-NetTCPConnection -LocalPort ${port} -ErrorAction SilentlyContinue | Stop-Process -Id { $_.OwningProcess } -Force -ErrorAction SilentlyContinue`;
+          const psCommand = `Get-NetTCPConnection -LocalPort ${port} -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }`;
           execSync(psCommand, { shell: "powershell.exe" });
         } catch {
           // Fallback to netstat
-          execSync(`cmd.exe /c "FOR /F "tokens=5" %a in ('netstat -ano ^| findstr :${port}') do taskkill /F /PID %a"`);
+          execSync(`cmd.exe /c "FOR /F \\"tokens=5\\" %a in ('netstat -ano ^| findstr :${port}') do taskkill /F /PID %a"`);
         }
         break;
         
@@ -109,18 +121,18 @@ export function killProcessOnPort(port: number) {
         try {
           // Use cmd.exe explicitly to ensure proper execution
           execSync(
-            `cmd.exe /c "FOR /F "tokens=5" %a in ('netstat -ano ^| findstr :${port}') do taskkill /F /PID %a"`,
+            `cmd.exe /c "FOR /F \\"tokens=5\\" %a in ('netstat -ano ^| findstr :${port}') do taskkill /F /PID %a"`,
             { shell: false }
           );
         } catch (error) {
-          console.warn(`Could not kill process on port ${port} in CMD environment`);
+          logger.warn(`Could not kill process on port ${port} in CMD environment`);
         }
         break;
     }
     
-    console.log(`Successfully attempted to kill process on port ${port}`);
+    logger.info(`Successfully attempted to kill process on port ${port}`);
   } catch (error) {
-    console.error(`Failed to kill process on port ${port}:`, error);
+    logger.error(`Failed to kill process on port ${port}:`, error);
     // Don't throw - allow the application to continue
     // The port might already be free or the process might have different permissions
   }
@@ -134,7 +146,7 @@ export async function freePort(port: number): Promise<boolean> {
   const inUse = await isPortInUse(port);
   
   if (!inUse) {
-    console.log(`Port ${port} is already free`);
+    logger.info(`Port ${port} is already free`);
     return true;
   }
   
@@ -148,10 +160,10 @@ export async function freePort(port: number): Promise<boolean> {
   const stillInUse = await isPortInUse(port);
   
   if (!stillInUse) {
-    console.log(`Successfully freed port ${port}`);
+    logger.info(`Successfully freed port ${port}`);
     return true;
   } else {
-    console.warn(`Port ${port} is still in use after kill attempt`);
+    logger.warn(`Port ${port} is still in use after kill attempt`);
     return false;
   }
 }
