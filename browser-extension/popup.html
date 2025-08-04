@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browser MCP DevTools</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 350px;
+      min-height: 400px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .status-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 10px;
+      animation: pulse 2s infinite;
+    }
+
+    .status-dot.connected {
+      background: #4CAF50;
+    }
+
+    .status-dot.disconnected {
+      background: #f44336;
+      animation: none;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+      }
+    }
+
+    .status-text {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .tab-info {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-top: 10px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 5px;
+    }
+
+    .connect-btn {
+      width: 100%;
+      padding: 15px;
+      background: #fff;
+      color: #667eea;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 15px;
+    }
+
+    .connect-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .connect-btn:active {
+      transform: translateY(0);
+    }
+
+    .connect-btn.disconnect {
+      background: #f44336;
+      color: white;
+    }
+
+    .connect-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .features {
+      margin-top: 20px;
+    }
+
+    .features h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .feature-item {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      text-align: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .feature-item.active {
+      background: rgba(76, 175, 80, 0.3);
+    }
+
+    .settings-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .settings-link a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      opacity: 0.8;
+      transition: opacity 0.3s;
+    }
+
+    .settings-link a:hover {
+      opacity: 1;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 3px solid white;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔧 Browser MCP</h1>
+      <p>DevTools Integration</p>
+    </div>
+
+    <div class="status-card">
+      <div class="status-indicator">
+        <div class="status-dot disconnected" id="statusDot"></div>
+        <span class="status-text" id="statusText">未連接</span>
+      </div>
+      <div class="tab-info" id="tabInfo" style="display: none;">
+        <div id="tabTitle"></div>
+        <div id="tabUrl"></div>
+      </div>
+    </div>
+
+    <button class="connect-btn" id="connectBtn">連接當前標籤頁</button>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p style="margin-top: 10px;">連接中...</p>
+    </div>
+
+    <div class="features">
+      <h3>可用功能</h3>
+      <div class="feature-list">
+        <div class="feature-item" id="feature-network">🌐 Network</div>
+        <div class="feature-item" id="feature-performance">⚡ Performance</div>
+        <div class="feature-item" id="feature-dom">🔍 DOM</div>
+        <div class="feature-item" id="feature-javascript">💻 JavaScript</div>
+        <div class="feature-item" id="feature-memory">💾 Memory</div>
+        <div class="feature-item" id="feature-security">🔐 Security</div>
+        <div class="feature-item" id="feature-storage">🗄️ Storage</div>
+        <div class="feature-item" id="feature-console">📝 Console</div>
+      </div>
+    </div>
+
+    <div class="settings-link">
+      <a href="#" id="settingsLink">⚙️ 設定</a>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
