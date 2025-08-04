@@ -44,13 +44,18 @@ class DevToolsHandler {
       "Network",
       "Page",
       "DOM",
+      "CSS",
       "Runtime",
       "Performance",
       "Security",
       "Storage",
       "Console",
       "Profiler",
-      "HeapProfiler"
+      "HeapProfiler",
+      "Accessibility",
+      "DOMStorage",
+      "IndexedDB",
+      "DOMDebugger"
     ];
 
     for (const domain of domains) {
@@ -289,12 +294,27 @@ class DevToolsHandler {
 
       // 獲取事件監聽器
       if (options.includeEventListeners !== false) {
-        const listeners = await chrome.debugger.sendCommand(
-          this.debuggeeId,
-          "DOMDebugger.getEventListeners",
-          { objectId: node.nodeId.toString() }
-        );
-        elementInfo.eventListeners = listeners.listeners;
+        try {
+          // First, resolve the node to a runtime object ID
+          const resolvedNode = await chrome.debugger.sendCommand(
+            this.debuggeeId,
+            "DOM.resolveNode",
+            { nodeId: node.nodeId }
+          );
+          if (resolvedNode && resolvedNode.object && resolvedNode.object.objectId) {
+            const listeners = await chrome.debugger.sendCommand(
+              this.debuggeeId,
+              "DOMDebugger.getEventListeners",
+              { objectId: resolvedNode.object.objectId }
+            );
+            elementInfo.eventListeners = listeners.listeners;
+          } else {
+            elementInfo.eventListeners = [];
+          }
+        } catch (error) {
+          console.warn("Failed to get event listeners:", error);
+          elementInfo.eventListeners = [];
+        }
       }
 
       // 獲取無障礙屬性

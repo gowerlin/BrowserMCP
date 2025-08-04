@@ -95,7 +95,7 @@ export function killProcessOnPort(port: number) {
             if (pid && !isNaN(Number(pid)) && Number(pid) > 0) {
               try {
                 // Use taskkill for Windows processes
-                execSync(`taskkill /F /PID ${pid} 2>/dev/null`, { shell: "/bin/bash" });
+                execSync(`taskkill /F /PID ${pid}`, { shell: "/bin/bash", stdio: 'ignore' });
                 logger.debug(`Killed process ${pid} on port ${port}`);
               } catch {
                 // Process might already be gone or we lack permissions

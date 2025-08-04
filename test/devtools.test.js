@@ -6,7 +6,7 @@ const assert = require('assert');
 const { WebSocket } = require('ws');
 
 // 測試配置
-const WS_URL = 'ws://localhost:9002';
+const WS_URL = process.env.WS_URL || 'ws://localhost:9002';
 const TEST_TIMEOUT = 30000;
 
 // 測試助手函數
@@ -251,11 +251,34 @@ describe('DevTools Integration Tests', function() {
 
 // 執行測試
 if (require.main === module) {
-  const Mocha = require('mocha');
-  const mocha = new Mocha();
+  // 檢查 WebSocket 伺服器是否運行
+  const testConnection = new WebSocket(WS_URL);
   
-  mocha.addFile(__filename);
-  mocha.run(failures => {
-    process.exitCode = failures ? 1 : 0;
+  testConnection.on('open', () => {
+    testConnection.close();
+    
+    // 伺服器運行中，執行測試
+    const Mocha = require('mocha');
+    const mocha = new Mocha();
+    
+    mocha.addFile(__filename);
+    mocha.run(failures => {
+      process.exitCode = failures ? 1 : 0;
+    });
+  });
+  
+  testConnection.on('error', (error) => {
+    console.error(`
+╔════════════════════════════════════════════════════════════╗
+║  WebSocket 伺服器未運行！                                    ║
+║                                                             ║
+║  請先啟動 MCP 伺服器：                                       ║
+║  $ npm run watch                                           ║
+║                                                             ║
+║  或設定環境變數：                                             ║
+║  $ WS_URL=ws://your-server:port npm test                   ║
+╚════════════════════════════════════════════════════════════╝
+    `);
+    process.exitCode = 1;
   });
 }
