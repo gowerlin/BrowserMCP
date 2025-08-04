@@ -107,6 +107,9 @@ async function connectToTab(tabId) {
  */
 async function disconnect() {
   try {
+    // Remove debugger event listener first
+    chrome.debugger.onEvent.removeListener(handleDebuggerEvent);
+    
     if (debuggeeAttached && currentTabId) {
       await chrome.debugger.detach({ tabId: currentTabId });
       debuggeeAttached = false;
@@ -143,17 +146,35 @@ async function attachDebugger(tabId) {
       return;
     }
     
-    chrome.debugger.attach({ tabId: tabId }, "1.3", () => {
-      if (chrome.runtime.lastError) {
-        reject(new Error(chrome.runtime.lastError.message));
-      } else {
-        debuggeeAttached = true;
-        
-        // Listen for debugger events
-        chrome.debugger.onEvent.addListener(handleDebuggerEvent);
-        
-        resolve();
-      }
+    // First, try to detach any existing debugger
+    chrome.debugger.detach({ tabId: tabId }, () => {
+      // Clear any error from detach attempt (it's ok if nothing was attached)
+      chrome.runtime.lastError;
+      
+      // Now attach the debugger
+      setTimeout(() => {
+        chrome.debugger.attach({ tabId: tabId }, "1.3", () => {
+          if (chrome.runtime.lastError) {
+            const error = chrome.runtime.lastError.message;
+            
+            // Provide helpful error messages
+            if (error.includes('Another debugger')) {
+              reject(new Error('另一個調試器已連接到此標籤頁。請關閉開發者工具(F12)後再試。'));
+            } else if (error.includes('Cannot access')) {
+              reject(new Error('無法連接到此標籤頁。Chrome 擴充功能無法調試 Chrome 商店或系統頁面。'));
+            } else {
+              reject(new Error(error));
+            }
+          } else {
+            debuggeeAttached = true;
+            
+            // Listen for debugger events
+            chrome.debugger.onEvent.addListener(handleDebuggerEvent);
+            
+            resolve();
+          }
+        });
+      }, 100); // Small delay to ensure detach completes
     });
   });
 }

@@ -184,13 +184,27 @@ function showLoading(show) {
 function showError(message) {
   // 暫時將狀態文字改為錯誤訊息
   const originalText = statusText.textContent;
-  statusText.textContent = message;
+  
+  // 處理較長的錯誤訊息
+  if (message.length > 50) {
+    // 顯示簡短版本在狀態文字
+    const shortMessage = message.substring(0, 47) + '...';
+    statusText.textContent = shortMessage;
+    statusText.title = message; // 完整訊息顯示在提示中
+  } else {
+    statusText.textContent = message;
+  }
+  
   statusText.style.color = '#f44336';
+  
+  // 根據訊息長度調整顯示時間
+  const displayTime = Math.min(3000 + (message.length * 20), 6000);
   
   setTimeout(() => {
     statusText.textContent = originalText;
     statusText.style.color = '';
-  }, 3000);
+    statusText.title = '';
+  }, displayTime);
 }
 
 /**
