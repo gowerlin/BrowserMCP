@@ -295,7 +295,7 @@ window.addEventListener('message', async (event) => {
   
   // Check if this is a BrowserMCP request
   if (event.data && event.data.type === 'browserMCP-request') {
-    const { messageId, action, params } = event.data;
+    const { messageId, action, command, params } = event.data;
     
     // Check if extension context is valid
     if (!isExtensionValid || !chrome.runtime?.id) {
@@ -312,10 +312,16 @@ window.addEventListener('message', async (event) => {
     
     try {
       // Forward the request to the background script
-      const response = await chrome.runtime.sendMessage({
+      // Make sure to include all necessary fields
+      const message = {
         action: action,
-        ...params
-      });
+        command: command || params?.command,  // Support both ways
+        params: params || {}
+      };
+      
+      console.log('Content script forwarding message:', message);
+      
+      const response = await chrome.runtime.sendMessage(message);
       
       // Send the response back to the web page
       window.postMessage({
