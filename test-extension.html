@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrowserMCP Chrome Extension Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .test-button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .test-button:hover {
+            background: #3367d6;
+        }
+        .test-button:active {
+            transform: scale(0.98);
+        }
+        .test-button.success {
+            background: #34a853;
+        }
+        .test-button.error {
+            background: #ea4335;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-image {
+            max-width: 100%;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .console-log {
+            padding: 5px;
+            margin: 2px 0;
+            border-left: 3px solid #4285f4;
+            background: white;
+        }
+        .console-log.warn {
+            border-left-color: #fbbc04;
+            background: #fff9e6;
+        }
+        .console-log.error {
+            border-left-color: #ea4335;
+            background: #ffebeb;
+        }
+        .console-log.info {
+            border-left-color: #34a853;
+            background: #e8f5e9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 BrowserMCP Chrome Extension Test</h1>
+        <p class="subtitle">測試 Chrome DevTools Protocol 整合功能</p>
+        
+        <div id="connectionStatus" class="status disconnected">
+            擴充功能未連接
+        </div>
+
+        <div class="test-section">
+            <h2>🔌 連接測試</h2>
+            <button class="test-button" onclick="checkConnection()">檢查連接狀態</button>
+            <button class="test-button" onclick="connectExtension()">連接擴充功能</button>
+            <div id="connectionOutput" class="output" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📸 截圖功能</h2>
+            <button class="test-button" onclick="captureScreenshot()">擷取螢幕截圖</button>
+            <button class="test-button" onclick="captureFullPage()">擷取完整頁面</button>
+            <div id="screenshotOutput" class="output" style="display:none;"></div>
+            <img id="screenshotImage" class="test-image" style="display:none;">
+        </div>
+
+        <div class="test-section">
+            <h2>📝 Console 日誌</h2>
+            <button class="test-button" onclick="generateLogs()">產生測試日誌</button>
+            <button class="test-button" onclick="captureLogs()">擷取 Console 日誌</button>
+            <button class="test-button" onclick="clearLogs()">清除日誌</button>
+            <div id="consoleOutput" class="output" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🌐 網路監控</h2>
+            <button class="test-button" onclick="enableNetwork()">啟用網路監控</button>
+            <button class="test-button" onclick="makeRequests()">發送測試請求</button>
+            <button class="test-button" onclick="getNetworkLog()">取得網路日誌</button>
+            <div id="networkOutput" class="output" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📄 頁面資訊</h2>
+            <button class="test-button" onclick="getPageInfo()">取得頁面資訊</button>
+            <button class="test-button" onclick="getDOMStats()">取得 DOM 統計</button>
+            <button class="test-button" onclick="getPerformance()">取得效能指標</button>
+            <div id="pageOutput" class="output" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 綜合測試</h2>
+            <button class="test-button" onclick="runAllTests()">執行所有測試</button>
+            <div id="allTestsOutput" class="output" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Helper function to display output
+        function showOutput(elementId, content, isError = false) {
+            const output = document.getElementById(elementId);
+            output.style.display = 'block';
+            output.textContent = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
+            if (isError) {
+                output.style.background = '#ffebeb';
+            } else {
+                output.style.background = '#f5f5f5';
+            }
+        }
+
+        // Helper function to send message to extension
+        async function sendToExtension(action, params = {}) {
+            try {
+                // Send message directly to the extension
+                const response = await chrome.runtime.sendMessage(
+                    'YOUR_EXTENSION_ID', // Will be replaced with actual extension ID
+                    {
+                        action: action,
+                        ...params
+                    }
+                );
+                return response;
+            } catch (error) {
+                console.error('Failed to communicate with extension:', error);
+                // Try without extension ID (if on same origin)
+                try {
+                    const response = await chrome.runtime.sendMessage({
+                        action: action,
+                        ...params
+                    });
+                    return response;
+                } catch (innerError) {
+                    return { success: false, error: innerError.message };
+                }
+            }
+        }
+
+        // Check connection status
+        async function checkConnection() {
+            showOutput('connectionOutput', 'Checking connection status...');
+            const response = await sendToExtension('getStatus');
+            
+            const statusEl = document.getElementById('connectionStatus');
+            if (response && response.connected) {
+                statusEl.className = 'status connected';
+                statusEl.textContent = `✅ 已連接到標籤頁 ${response.tabId}`;
+                showOutput('connectionOutput', `連接狀態:\n已連接: ${response.connected}\n標籤頁 ID: ${response.tabId}\nWebSocket: ${response.wsConnected ? '已連接' : '未連接'}`);
+            } else {
+                statusEl.className = 'status disconnected';
+                statusEl.textContent = '❌ 擴充功能未連接';
+                showOutput('connectionOutput', '擴充功能未連接到任何標籤頁', true);
+            }
+        }
+
+        // Connect extension (placeholder - actual connection is done through popup)
+        function connectExtension() {
+            showOutput('connectionOutput', '請使用擴充功能的 popup 介面來連接到標籤頁');
+        }
+
+        // Capture screenshot
+        async function captureScreenshot() {
+            showOutput('screenshotOutput', 'Capturing screenshot...');
+            
+            const response = await sendToExtension('executeDevToolsCommand', {
+                command: 'Page.captureScreenshot',
+                params: {
+                    format: 'png',
+                    quality: 90
+                }
+            });
+            
+            if (response.success && response.result.data) {
+                showOutput('screenshotOutput', 'Screenshot captured successfully!');
+                
+                // Display the screenshot
+                const img = document.getElementById('screenshotImage');
+                img.src = 'data:image/png;base64,' + response.result.data;
+                img.style.display = 'block';
+                
+                // Create download link
+                const blob = await fetch(img.src).then(r => r.blob());
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `screenshot-${Date.now()}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+            } else {
+                showOutput('screenshotOutput', `Failed: ${response.error || 'Unknown error'}`, true);
+            }
+        }
+
+        // Capture full page screenshot
+        async function captureFullPage() {
+            showOutput('screenshotOutput', 'Capturing full page...');
+            
+            // First get page metrics
+            const metricsResponse = await sendToExtension('executeDevToolsCommand', {
+                command: 'Page.getLayoutMetrics',
+                params: {}
+            });
+            
+            if (!metricsResponse.success) {
+                showOutput('screenshotOutput', `Failed to get page metrics: ${metricsResponse.error}`, true);
+                return;
+            }
+            
+            const { contentSize } = metricsResponse.result;
+            
+            // Capture full page
+            const response = await sendToExtension('executeDevToolsCommand', {
+                command: 'Page.captureScreenshot',
+                params: {
+                    format: 'png',
+                    quality: 90,
+                    clip: {
+                        x: 0,
+                        y: 0,
+                        width: contentSize.width,
+                        height: contentSize.height,
+                        scale: 1
+                    }
+                }
+            });
+            
+            if (response.success && response.result.data) {
+                showOutput('screenshotOutput', 'Full page screenshot captured!');
+                
+                const img = document.getElementById('screenshotImage');
+                img.src = 'data:image/png;base64,' + response.result.data;
+                img.style.display = 'block';
+            } else {
+                showOutput('screenshotOutput', `Failed: ${response.error || 'Unknown error'}`, true);
+            }
+        }
+
+        // Generate console logs
+        function generateLogs() {
+            console.log('Test log message at', new Date().toISOString());
+            console.warn('Test warning message');
+            console.error('Test error message');
+            console.info('Test info message');
+            console.debug('Test debug message');
+            
+            // Generate some structured data
+            console.log('User data:', { name: 'Test User', id: 123, active: true });
+            console.table([
+                { name: 'Alice', age: 30 },
+                { name: 'Bob', age: 25 },
+                { name: 'Charlie', age: 35 }
+            ]);
+            
+            showOutput('consoleOutput', 'Generated test console logs. Check browser console.');
+        }
+
+        // Capture console logs
+        async function captureLogs() {
+            showOutput('consoleOutput', 'Note: Console logs are captured in the extension background script.\nCheck the extension\'s background page console to see captured logs.');
+        }
+
+        // Clear console logs  
+        async function clearLogs() {
+            const response = await sendToExtension('executeDevToolsCommand', {
+                command: 'Console.clearMessages',
+                params: {}
+            });
+            
+            if (response.success) {
+                showOutput('consoleOutput', 'Console cleared');
+                console.clear();
+            } else {
+                showOutput('consoleOutput', `Failed: ${response.error}`, true);
+            }
+        }
+
+        // Enable network monitoring
+        async function enableNetwork() {
+            const response = await sendToExtension('executeDevToolsCommand', {
+                command: 'Network.enable',
+                params: {}
+            });
+            
+            if (response.success) {
+                showOutput('networkOutput', 'Network monitoring enabled. Make some requests to see them logged.');
+            } else {
+                showOutput('networkOutput', `Failed: ${response.error}`, true);
+            }
+        }
+
+        // Make test requests
+        async function makeRequests() {
+            showOutput('networkOutput', 'Making test requests...');
+            
+            // Make various types of requests
+            const requests = [
+                fetch('https://jsonplaceholder.typicode.com/posts/1'),
+                fetch('https://jsonplaceholder.typicode.com/users'),
+                fetch('https://httpbin.org/get'),
+                fetch('https://api.github.com/users/github')
+            ];
+            
+            try {
+                await Promise.all(requests);
+                showOutput('networkOutput', 'Test requests sent. Check the extension background page for captured network activity.');
+            } catch (error) {
+                showOutput('networkOutput', `Some requests failed: ${error.message}`, true);
+            }
+        }
+
+        // Get network log
+        async function getNetworkLog() {
+            showOutput('networkOutput', 'Network logs are captured in the extension background script.\nCheck the extension\'s background page console to see network activity.');
+        }
+
+        // Get page info
+        async function getPageInfo() {
+            const response = await sendToExtension('executeDevToolsCommand', {
+                command: 'Page.getResourceTree',
+                params: {}
+            });
+            
+            if (response.success) {
+                const info = response.result.frameTree.frame;
+                const output = `頁面資訊:
+URL: ${info.url}
+標題: ${document.title}
+安全來源: ${info.securityOrigin}
+MIME 類型: ${info.mimeType}
+資源數: ${response.result.frameTree.resources ? response.result.frameTree.resources.length : 0}`;
+                showOutput('pageOutput', output);
+            } else {
+                showOutput('pageOutput', `Failed: ${response.error}`, true);
+            }
+        }
+
+        // Get DOM statistics
+        async function getDOMStats() {
+            const response = await sendToExtension('executeDevToolsCommand', {
+                command: 'DOM.getDocument',
+                params: { depth: 0 }
+            });
+            
+            if (response.success) {
+                const stats = `DOM 統計:
+節點 ID: ${response.result.root.nodeId}
+節點類型: ${response.result.root.nodeType}
+節點名稱: ${response.result.root.nodeName}
+子節點數: ${response.result.root.childNodeCount || 0}
+文檔 URL: ${response.result.root.documentURL}`;
+                showOutput('pageOutput', stats);
+            } else {
+                showOutput('pageOutput', `Failed: ${response.error}`, true);
+            }
+        }
+
+        // Get performance metrics
+        async function getPerformance() {
+            const response = await sendToExtension('executeDevToolsCommand', {
+                command: 'Performance.getMetrics',
+                params: {}
+            });
+            
+            if (response.success) {
+                const metrics = response.result.metrics;
+                const output = metrics.map(m => `${m.name}: ${m.value.toFixed(2)}`).join('\n');
+                showOutput('pageOutput', `效能指標:\n${output}`);
+            } else {
+                showOutput('pageOutput', `Failed: ${response.error}`, true);
+            }
+        }
+
+        // Run all tests
+        async function runAllTests() {
+            showOutput('allTestsOutput', 'Running all tests...\n');
+            
+            const tests = [
+                { name: 'Connection Status', fn: checkConnection },
+                { name: 'Page Info', fn: getPageInfo },
+                { name: 'Screenshot', fn: captureScreenshot },
+                { name: 'Console Logs', fn: generateLogs },
+                { name: 'Network Monitoring', fn: enableNetwork },
+                { name: 'DOM Stats', fn: getDOMStats }
+            ];
+            
+            let results = [];
+            for (const test of tests) {
+                try {
+                    await test.fn();
+                    results.push(`✅ ${test.name}: Success`);
+                } catch (error) {
+                    results.push(`❌ ${test.name}: ${error.message}`);
+                }
+                await new Promise(r => setTimeout(r, 500));
+            }
+            
+            showOutput('allTestsOutput', results.join('\n'));
+        }
+
+        // Check connection on load
+        window.addEventListener('load', checkConnection);
+    </script>
+</body>
+</html>
