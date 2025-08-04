@@ -1,0 +1,9 @@
+感謝 @Copilot 的詳細審查！已根據所有建議完成修正：
+
+✅ **修正 1**: 已將 Git Bash 中的錯誤重定向改為使用 stdio: 'ignore' 選項
+✅ **修正 2**: WebSocket URL 現在可透過環境變數 WS_URL 設定
+✅ **修正 3**: 修正 DOM 事件監聽器 API，先使用 DOM.resolveNode 解析節點
+✅ **修正 4**: 新增缺少的 CDP 域（CSS、Accessibility、DOMStorage、IndexedDB、DOMDebugger）
+✅ **額外改進**: 新增 WebSocket 伺服器連接檢查，提供更友善的錯誤訊息
+
+所有修正已在 commit 9235fc7 中完成。請重新審查，謝謝！

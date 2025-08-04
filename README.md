@@ -10,6 +10,8 @@
   <a href="https://browsermcp.io"><strong>Website</strong></a> 
   •
   <a href="https://docs.browsermcp.io"><strong>Docs</strong></a>
+  •
+  <a href="./README-zh-TW.md"><strong>繁體中文</strong></a>
 </p>
 
 ## About
@@ -55,7 +57,9 @@ This fork includes critical fixes for Windows Git Bash compatibility issues pres
 - ✅ Maintains compatibility with CMD and PowerShell
 - ✅ Cross-platform support (Windows, macOS, Linux)
 
-For technical details, see [COMPATIBILITY.md](./docs/COMPATIBILITY.md).
+For technical details:
+- 📖 [English Documentation](./docs/COMPATIBILITY.md)
+- 🇹🇼 [繁體中文文檔](./docs/COMPATIBILITY.zh-TW.md)
 
 ## Configuration Examples
 
