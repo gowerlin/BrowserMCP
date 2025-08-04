@@ -18,10 +18,25 @@ Browser MCP is an MCP server + Chrome extension that allows you to automate your
 
 ## Features
 
+### Core Features
 - ⚡ Fast: Automation happens locally on your machine, resulting in better performance without network latency.
 - 🔒 Private: Since automation happens locally, your browser activity stays on your device and isn't sent to remote servers.
 - 👤 Logged In: Uses your existing browser profile, keeping you logged into all your services.
 - 🥷🏼 Stealth: Avoids basic bot detection and CAPTCHAs by using your real browser fingerprint.
+
+### 🆕 DevTools Integration (v0.2.0)
+Complete Chrome DevTools Protocol integration for advanced debugging and analysis:
+
+- 🌐 **Network Monitoring** - Track and analyze all network requests, responses, and performance metrics
+- ⚡ **Performance Analysis** - Core Web Vitals, profiling, and performance metrics collection
+- 🔍 **DOM Inspection** - Examine elements, styles, event listeners, and accessibility properties
+- 💻 **JavaScript Execution** - Execute code in page context with coverage analysis
+- 💾 **Memory Analysis** - Memory usage statistics and heap snapshot capabilities
+- 🔐 **Security Analysis** - Security state inspection and certificate validation
+- 🗄️ **Storage Inspection** - Access localStorage, sessionStorage, cookies, and IndexedDB
+- 📝 **Console Monitoring** - Capture and analyze console logs and errors
+
+For detailed DevTools documentation, see [DEVTOOLS.md](./docs/DEVTOOLS.md).
 
 ## Cross-Platform Compatibility Fix
 

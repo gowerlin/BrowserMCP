@@ -5,7 +5,14 @@
       "Bash(npm install:*)",
       "Bash(npm run build:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)",
+      "Bash(winget install:*)",
+      "Bash(gh auth:*)",
+      "Bash(where gh)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" --version)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" pr create --title \"feat: 完整 DevTools 功能支援\" --body \"$(cat <<''EOF''\n## 📋 概述\n\n實作完整的 Chrome DevTools Protocol 整合，提供進階的網頁偵錯與分析能力。\n\n## ✨ 新功能\n\n### MCP 服務端\n- 🔧 13 個新的 DevTools 工具函數\n- 📝 完整的類型定義和 schema 驗證\n- 🔌 WebSocket 訊息處理整合\n\n### 瀏覽器擴充功能\n- 🎯 Chrome DevTools Protocol (CDP) 處理器\n- 🌉 WebSocket 訊息橋接器\n- 🎨 使用者友善的 popup 介面\n- ⚙️ 背景服務 worker\n\n### 支援的功能\n- 🌐 **Network 監控** - 請求/回應追蹤、過濾、分析\n- ⚡ **Performance 分析** - Core Web Vitals、效能指標、profiling\n- 🔍 **DOM 檢查** - 元素屬性、樣式、事件監聽器\n- 💻 **JavaScript 執行** - 程式碼執行、覆蓋率分析\n- 💾 **Memory 分析** - 記憶體使用、heap 快照\n- 🔐 **Security 檢查** - 安全狀態、憑證資訊\n- 🗄️ **Storage 檢查** - localStorage、cookies、IndexedDB\n- 📝 **Console 監控** - 日誌收集與分析\n\n## 📁 變更的檔案\n\n### 新增\n- src/tools/devtools.ts - DevTools 工具實作\n- src/types/internal-types.ts - 內部類型定義\n- browser-extension/ - 完整的瀏覽器擴充功能\n- test/devtools.test.js - 測試套件\n- docs/DEVTOOLS.md - 功能文件\n\n### 修改\n- src/index.ts - 加入 DevTools 工具\n- package.json - 新增 zod 依賴\n\n## 🧪 測試\n\n- [x] 單元測試已撰寫\n- [x] 編譯成功無錯誤\n- [ ] 瀏覽器擴充功能測試\n- [ ] 整合測試\n\n## 📚 文件\n\n完整的功能文件已新增至 docs/DEVTOOLS.md\n\n## 🚀 部署檢查清單\n\n- [x] 程式碼審查\n- [x] 測試通過\n- [x] 文件更新\n- [ ] 版本號更新\nEOF\n)\" --base main)"
     ],
     "deny": []
   }
