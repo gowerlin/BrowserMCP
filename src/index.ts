@@ -3,12 +3,13 @@ import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { program } from "commander";
 
-import { appConfig } from "@repo/config/app.config";
+import { appConfig } from "./types/internal-types";
 
 import type { Resource } from "@/resources/resource";
 import { createServerWithTools } from "@/server";
 import * as common from "@/tools/common";
 import * as custom from "@/tools/custom";
+import * as devtools from "@/tools/devtools";
 import * as snapshot from "@/tools/snapshot";
 import type { Tool } from "@/tools/tool";
 
@@ -26,6 +27,29 @@ const commonTools: Tool[] = [common.pressKey, common.wait];
 
 const customTools: Tool[] = [custom.getConsoleLogs, custom.screenshot];
 
+const devToolsTools: Tool[] = [
+  // Network 監控
+  devtools.getNetworkRequests,
+  devtools.clearNetworkLog,
+  // Performance 監控
+  devtools.getPerformanceMetrics,
+  devtools.startPerformanceProfiling,
+  devtools.stopPerformanceProfiling,
+  // DOM 檢查
+  devtools.inspectElement,
+  devtools.getDOMTree,
+  // JavaScript 執行
+  devtools.evaluateJavaScript,
+  devtools.getJavaScriptCoverage,
+  // Memory 分析
+  devtools.getMemoryUsage,
+  devtools.takeHeapSnapshot,
+  // Security 分析
+  devtools.getSecurityState,
+  // Storage 檢查
+  devtools.getStorageData,
+];
+
 const snapshotTools: Tool[] = [
   common.navigate(true),
   common.goBack(true),
@@ -37,6 +61,7 @@ const snapshotTools: Tool[] = [
   snapshot.selectOption,
   ...commonTools,
   ...customTools,
+  ...devToolsTools,
 ];
 
 const resources: Resource[] = [];

@@ -7,7 +7,7 @@ import {
   SelectOptionTool,
   SnapshotTool,
   TypeTool,
-} from "@repo/types/mcp/tool";
+} from "../types/internal-types";
 
 import type { Context } from "@/context";
 import { captureAriaSnapshot } from "@/utils/aria-snapshot";
@@ -39,7 +39,7 @@ export const click: Tool = {
       content: [
         {
           type: "text",
-          text: `Clicked "${validatedParams.element}"`,
+          text: `Clicked "${validatedParams.selector}"`,
         },
         ...snapshot.content,
       ],
@@ -61,7 +61,7 @@ export const drag: Tool = {
       content: [
         {
           type: "text",
-          text: `Dragged "${validatedParams.startElement}" to "${validatedParams.endElement}"`,
+          text: `Dragged "${validatedParams.from}" to "${validatedParams.to}"`,
         },
         ...snapshot.content,
       ],
@@ -83,7 +83,7 @@ export const hover: Tool = {
       content: [
         {
           type: "text",
-          text: `Hovered over "${validatedParams.element}"`,
+          text: `Hovered over "${validatedParams.selector}"`,
         },
         ...snapshot.content,
       ],
@@ -105,7 +105,7 @@ export const type: Tool = {
       content: [
         {
           type: "text",
-          text: `Typed "${validatedParams.text}" into "${validatedParams.element}"`,
+          text: `Typed "${validatedParams.text}" into "${validatedParams.selector}"`,
         },
         ...snapshot.content,
       ],
@@ -127,7 +127,7 @@ export const selectOption: Tool = {
       content: [
         {
           type: "text",
-          text: `Selected option in "${validatedParams.element}"`,
+          text: `Selected option in "${validatedParams.selector}"`,
         },
         ...snapshot.content,
       ],
