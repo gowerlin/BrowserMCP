@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrowserMCP 簡易測試</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #4285f4;
+            padding-bottom: 10px;
+        }
+        .test-area {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #3367d6;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #263238;
+            color: #aed581;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        img {
+            max-width: 100%;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 BrowserMCP Chrome Extension 簡易測試</h1>
+        
+        <div class="info">
+            <strong>測試步驟：</strong>
+            <ol>
+                <li>確保擴充功能已安裝並啟用</li>
+                <li>點擊擴充功能圖示，連接到當前標籤頁</li>
+                <li>開啟瀏覽器開發者工具 (F12) 的 Console</li>
+                <li>在 Console 中執行下方的測試命令</li>
+            </ol>
+        </div>
+
+        <div class="test-area">
+            <h2>📸 截圖測試</h2>
+            <p>在 Console 中執行以下命令來擷取截圖：</p>
+            <div class="output">// 基本截圖測試
+// 注意：這需要在 Console 中手動執行
+
+// 1. 檢查 browserMCP 是否可用
+if (window.browserMCP) {
+    console.log('✅ BrowserMCP helper 已載入');
+} else {
+    console.log('❌ BrowserMCP helper 未載入，請確認擴充功能已連接');
+}
+
+// 2. 擷取截圖
+if (window.browserMCP) {
+    window.browserMCP.sendCommand('Page.captureScreenshot', { 
+        format: 'png', 
+        quality: 90 
+    }).then(result => {
+        if (result.success && result.result.data) {
+            // 創建下載連結
+            const a = document.createElement('a');
+            a.href = 'data:image/png;base64,' + result.result.data;
+            a.download = 'screenshot-' + Date.now() + '.png';
+            a.click();
+            console.log('✅ 截圖已儲存！');
+        } else {
+            console.error('❌ 截圖失敗:', result.error);
+        }
+    });
+}</div>
+        </div>
+
+        <div class="test-area">
+            <h2>📊 頁面資訊測試</h2>
+            <p>在 Console 中執行以下命令來取得頁面資訊：</p>
+            <div class="output">// 取得頁面資訊
+if (window.browserMCP) {
+    window.browserMCP.sendCommand('Page.getResourceTree', {})
+        .then(result => {
+            if (result.success) {
+                const info = result.result.frameTree.frame;
+                console.log('頁面資訊：');
+                console.log('- URL:', info.url);
+                console.log('- 安全來源:', info.securityOrigin);
+                console.log('- MIME 類型:', info.mimeType);
+            }
+        });
+}</div>
+        </div>
+
+        <div class="test-area">
+            <h2>🎯 Console 測試</h2>
+            <p>在 Console 中執行以下命令來啟用 Console 監控：</p>
+            <div class="output">// 啟用 Console 監控
+if (window.browserMCP) {
+    window.browserMCP.sendCommand('Console.enable', {})
+        .then(() => {
+            console.log('✅ Console 監控已啟用');
+            
+            // 產生測試訊息
+            console.log('測試訊息 1');
+            console.warn('測試警告');
+            console.error('測試錯誤');
+            console.info('測試資訊');
+        });
+}</div>
+        </div>
+
+        <div class="test-area">
+            <h2>🔧 直接測試（不需要 helper）</h2>
+            <p>如果 helper 未載入，可以直接在 Console 中使用 Chrome API：</p>
+            <div class="output">// 直接發送訊息到擴充功能（需要擴充功能 ID）
+// 請將 EXTENSION_ID 替換為實際的擴充功能 ID
+chrome.runtime.sendMessage('EXTENSION_ID', {
+    action: 'executeDevToolsCommand',
+    command: 'Page.captureScreenshot',
+    params: { format: 'png', quality: 90 }
+}, response => {
+    console.log('Response:', response);
+});</div>
+        </div>
+
+        <div class="test-area">
+            <h2>💡 除錯提示</h2>
+            <ul>
+                <li>如果看到 "Extension context invalidated" 錯誤，請重新載入擴充功能</li>
+                <li>確保擴充功能有 "允許存取檔案網址" 權限（如果使用 file:// 協議）</li>
+                <li>檢查擴充功能背景頁面的 Console 以查看詳細錯誤</li>
+                <li>使用 HTTP 伺服器而不是 file:// 協議可以避免一些權限問題</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 檢查是否有 Chrome extension API
+        if (typeof chrome !== 'undefined' && chrome.runtime) {
+            console.log('Chrome Extension API 可用');
+            
+            // 嘗試檢測 BrowserMCP helper
+            setTimeout(() => {
+                if (window.browserMCP) {
+                    console.log('✅ BrowserMCP helper 已自動載入');
+                    console.log('可以使用 window.browserMCP.sendCommand() 來執行 DevTools 命令');
+                } else {
+                    console.log('⚠️ BrowserMCP helper 未自動載入');
+                    console.log('請確保：');
+                    console.log('1. 擴充功能已安裝並啟用');
+                    console.log('2. 已通過擴充功能 popup 連接到當前標籤頁');
+                    console.log('3. 頁面已重新整理');
+                }
+            }, 1000);
+        } else {
+            console.log('❌ Chrome Extension API 不可用');
+        }
+
+        // 添加一個簡單的測試函數
+        window.testScreenshot = async function() {
+            if (!window.browserMCP) {
+                console.error('BrowserMCP helper 未載入');
+                return;
+            }
+            
+            console.log('開始擷取截圖...');
+            try {
+                const result = await window.browserMCP.sendCommand('Page.captureScreenshot', {
+                    format: 'png',
+                    quality: 90
+                });
+                
+                if (result.success && result.result.data) {
+                    const a = document.createElement('a');
+                    a.href = 'data:image/png;base64,' + result.result.data;
+                    a.download = 'screenshot-' + Date.now() + '.png';
+                    a.click();
+                    console.log('✅ 截圖已儲存！');
+                } else {
+                    console.error('截圖失敗:', result);
+                }
+            } catch (error) {
+                console.error('截圖錯誤:', error);
+            }
+        };
+
+        console.log('提示：執行 testScreenshot() 來快速測試截圖功能');
+    </script>
+</body>
+</html>
