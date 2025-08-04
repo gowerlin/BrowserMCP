@@ -1,160 +1,160 @@
 # Browser MCP DevTools Integration
 
-完整的瀏覽器 DevTools 功能整合，提供進階的網頁偵錯與分析能力。
+Complete browser DevTools integration providing advanced web debugging and analysis capabilities.
 
-## 功能概覽
+## Feature Overview
 
-### 🌐 Network 監控
-監控和分析所有網路請求，包括 XHR、Fetch API、WebSocket 等。
+### 🌐 Network Monitoring
+Monitor and analyze all network requests including XHR, Fetch API, WebSocket, and more.
 
-#### 可用工具
-- `browser_get_network_requests` - 獲取所有網路請求詳細資訊
-- `browser_clear_network_log` - 清除網路請求記錄
+#### Available Tools
+- `browser_get_network_requests` - Get detailed information of all network requests
+- `browser_clear_network_log` - Clear network request logs
 
-#### 使用範例
+#### Usage Example
 ```javascript
-// 獲取所有網路請求
+// Get all network requests
 await browser_get_network_requests({
-  filter: "xhr",  // 只顯示 XHR 請求
-  includeResponseBody: true  // 包含回應內容
+  filter: "xhr",  // Show only XHR requests
+  includeResponseBody: true  // Include response body
 });
 
-// 清除網路記錄
+// Clear network logs
 await browser_clear_network_log();
 ```
 
-### ⚡ Performance 監控
-追蹤和分析網頁效能，包括 Core Web Vitals、記憶體使用等。
+### ⚡ Performance Monitoring
+Track and analyze web page performance including Core Web Vitals and memory usage.
 
-#### 可用工具
-- `browser_get_performance_metrics` - 獲取效能指標
-- `browser_start_performance_profiling` - 開始效能分析
-- `browser_stop_performance_profiling` - 停止效能分析並獲取數據
+#### Available Tools
+- `browser_get_performance_metrics` - Get performance metrics
+- `browser_start_performance_profiling` - Start performance profiling
+- `browser_stop_performance_profiling` - Stop profiling and get data
 
-#### 效能指標包含
+#### Performance Metrics Include
 - **Core Web Vitals**: LCP, FID, CLS
-- **載入時間**: DOM 載入、頁面載入完成時間
-- **記憶體使用**: JS Heap 大小、DOM 節點數量
-- **渲染效能**: FPS、重繪次數
+- **Load Times**: DOM loaded, page load complete time
+- **Memory Usage**: JS Heap size, DOM node count
+- **Rendering Performance**: FPS, repaint count
 
-### 🔍 DOM 檢查
-深入檢查和分析 DOM 結構、樣式和事件監聽器。
+### 🔍 DOM Inspection
+Deep inspection and analysis of DOM structure, styles, and event listeners.
 
-#### 可用工具
-- `browser_inspect_element` - 檢查特定元素的詳細資訊
-- `browser_get_dom_tree` - 獲取 DOM 樹結構
+#### Available Tools
+- `browser_inspect_element` - Inspect detailed information of specific elements
+- `browser_get_dom_tree` - Get DOM tree structure
 
-#### 檢查內容
-- 元素屬性和內容
-- 計算後的樣式
-- 事件監聽器
-- 無障礙屬性
-- DOM 樹結構
+#### Inspection Content
+- Element attributes and content
+- Computed styles
+- Event listeners
+- Accessibility properties
+- DOM tree structure
 
-### 💻 JavaScript 執行環境
-在頁面上下文中執行 JavaScript 程式碼並分析覆蓋率。
+### 💻 JavaScript Execution Environment
+Execute JavaScript code in page context and analyze coverage.
 
-#### 可用工具
-- `browser_evaluate_javascript` - 執行 JavaScript 程式碼
-- `browser_get_javascript_coverage` - 獲取程式碼覆蓋率
+#### Available Tools
+- `browser_evaluate_javascript` - Execute JavaScript code
+- `browser_get_javascript_coverage` - Get code coverage
 
-#### 功能特點
-- 支援 async/await
-- 自動序列化返回值
-- 錯誤捕獲和報告
-- 程式碼覆蓋率分析
+#### Features
+- Support for async/await
+- Automatic return value serialization
+- Error capture and reporting
+- Code coverage analysis
 
-### 💾 Memory 分析
-分析記憶體使用情況，檢測記憶體洩漏。
+### 💾 Memory Analysis
+Analyze memory usage and detect memory leaks.
 
-#### 可用工具
-- `browser_get_memory_usage` - 獲取記憶體使用統計
-- `browser_take_heap_snapshot` - 擷取堆積快照
+#### Available Tools
+- `browser_get_memory_usage` - Get memory usage statistics
+- `browser_take_heap_snapshot` - Take heap snapshots
 
-#### 分析內容
-- JS Heap 大小和限制
-- DOM 節點數量
-- 事件監聽器數量
-- 物件分配統計
-- 記憶體洩漏檢測
+#### Analysis Content
+- JS Heap size and limits
+- DOM node count
+- Event listener count
+- Object allocation statistics
+- Memory leak detection
 
-### 🔐 Security 分析
-檢查頁面的安全狀態和潛在風險。
+### 🔐 Security Analysis
+Check page security status and potential risks.
 
-#### 可用工具
-- `browser_get_security_state` - 獲取安全狀態資訊
+#### Available Tools
+- `browser_get_security_state` - Get security state information
 
-#### 檢查項目
-- HTTPS 憑證狀態
-- 混合內容警告
-- CSP 政策
-- 安全標頭
-- Cookie 安全設定
+#### Check Items
+- HTTPS certificate status
+- Mixed content warnings
+- CSP policies
+- Security headers
+- Cookie security settings
 
-### 🗄️ Storage 檢查
-檢查和管理瀏覽器儲存資料。
+### 🗄️ Storage Inspection
+Inspect and manage browser storage data.
 
-#### 可用工具
-- `browser_get_storage_data` - 獲取儲存資料
+#### Available Tools
+- `browser_get_storage_data` - Get storage data
 
-#### 支援的儲存類型
+#### Supported Storage Types
 - localStorage
 - sessionStorage
 - Cookies
 - IndexedDB
 - Cache Storage
 
-## 整合需求
+## Integration Requirements
 
-### 瀏覽器擴充功能端實作
-這些功能需要在瀏覽器擴充功能端實作對應的處理邏輯：
+### Browser Extension Implementation
+These features require corresponding handler logic implementation in the browser extension:
 
-1. **Chrome DevTools Protocol (CDP) 整合**
-   - 使用 `chrome.debugger` API 連接到 DevTools
-   - 監聽和處理 CDP 事件
+1. **Chrome DevTools Protocol (CDP) Integration**
+   - Use `chrome.debugger` API to connect to DevTools
+   - Listen and handle CDP events
 
-2. **WebExtensions API 使用**
-   - `chrome.webRequest` - 網路請求監控
-   - `chrome.performance` - 效能數據
-   - `chrome.storage` - 儲存管理
+2. **WebExtensions API Usage**
+   - `chrome.webRequest` - Network request monitoring
+   - `chrome.performance` - Performance data
+   - `chrome.storage` - Storage management
 
-3. **WebSocket 訊息處理**
-   - 擴充訊息類型定義
-   - 實作對應的訊息處理器
+3. **WebSocket Message Handling**
+   - Extended message type definitions
+   - Implement corresponding message handlers
 
-## 安全考量
+## Security Considerations
 
-1. **權限管理**
-   - 需要適當的擴充功能權限
-   - 使用者授權確認
+1. **Permission Management**
+   - Requires appropriate extension permissions
+   - User authorization confirmation
 
-2. **資料隱私**
-   - 敏感資料過濾
-   - 回應內容大小限制
+2. **Data Privacy**
+   - Sensitive data filtering
+   - Response size limits
 
-3. **執行安全**
-   - JavaScript 執行沙箱
-   - 防止惡意程式碼執行
+3. **Execution Security**
+   - JavaScript execution sandbox
+   - Prevent malicious code execution
 
-## 效能最佳化
+## Performance Optimization
 
-1. **資料傳輸**
-   - 大型回應分頁傳輸
-   - 資料壓縮
+1. **Data Transmission**
+   - Paginated transmission for large responses
+   - Data compression
 
-2. **記憶體管理**
-   - 定期清理快取
-   - 限制資料保留時間
+2. **Memory Management**
+   - Regular cache cleanup
+   - Limited data retention time
 
-3. **非同步處理**
-   - 避免阻塞主執行緒
-   - 使用 Worker 處理大量資料
+3. **Asynchronous Processing**
+   - Avoid blocking main thread
+   - Use Workers for large data processing
 
-## 未來發展
+## Future Development
 
-- [ ] WebSocket 訊息追蹤
-- [ ] Service Worker 偵錯
-- [ ] PWA 功能檢測
-- [ ] 無障礙稽核
-- [ ] SEO 分析
-- [ ] 資源最佳化建議
+- [ ] WebSocket message tracking
+- [ ] Service Worker debugging
+- [ ] PWA feature detection
+- [ ] Accessibility audit
+- [ ] SEO analysis
+- [ ] Resource optimization suggestions

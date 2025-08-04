@@ -36,7 +36,9 @@ Complete Chrome DevTools Protocol integration for advanced debugging and analysi
 - 🗄️ **Storage Inspection** - Access localStorage, sessionStorage, cookies, and IndexedDB
 - 📝 **Console Monitoring** - Capture and analyze console logs and errors
 
-For detailed DevTools documentation, see [DEVTOOLS.md](./docs/DEVTOOLS.md).
+For detailed DevTools documentation:
+- 📖 [English Documentation](./docs/DEVTOOLS.md)
+- 🇹🇼 [繁體中文文檔](./docs/DEVTOOLS.zh-TW.md)
 
 ## Cross-Platform Compatibility Fix
 
