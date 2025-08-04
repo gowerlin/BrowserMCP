@@ -25,7 +25,8 @@
       "Bash(set BROWSERMCP_PUPPETEER_HEADLESS=true)",
       "Bash($env:BROWSERMCP_FALLBACK_MODE=\"puppeteer\")",
       "Bash($env:BROWSERMCP_PUPPETEER_HEADLESS=\"true\")",
-      "Bash(BROWSERMCP_FALLBACK_MODE=puppeteer BROWSERMCP_PUPPETEER_HEADLESS=true node dist/index.js --show-config)"
+      "Bash(BROWSERMCP_FALLBACK_MODE=puppeteer BROWSERMCP_PUPPETEER_HEADLESS=true node dist/index.js --show-config)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }
