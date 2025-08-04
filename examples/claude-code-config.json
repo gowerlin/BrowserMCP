@@ -1,0 +1,91 @@
+{
+  "//": "Claude Code CLI 配置範例 - 複製到 ~/.claude-code/mcp-servers.json 或專案 .claude-code/config.json",
+  
+  "mcp": {
+    "servers": {
+      "browsermcp-auto": {
+        "command": "npx",
+        "args": ["@browsermcp/mcp", "--auto-fallback"],
+        "cwd": ".",
+        "env": {
+          "BROWSERMCP_FALLBACK_MODE": "auto",
+          "BROWSERMCP_ENABLE_LOGGING": "true",
+          "BROWSERMCP_WS_URL": "ws://localhost:9002"
+        }
+      },
+      "browsermcp-extension": {
+        "command": "npx",
+        "args": ["@browsermcp/mcp", "--extension-only"],
+        "cwd": ".",
+        "env": {
+          "BROWSERMCP_FALLBACK_MODE": "extension",
+          "BROWSERMCP_EXTENSION_TIMEOUT": "10000"
+        }
+      },
+      "browsermcp-puppeteer": {
+        "command": "npx",
+        "args": ["@browsermcp/mcp", "--puppeteer-only", "--headless"],
+        "cwd": ".",
+        "env": {
+          "BROWSERMCP_FALLBACK_MODE": "puppeteer",
+          "BROWSERMCP_PUPPETEER_HEADLESS": "true"
+        }
+      }
+    }
+  },
+  
+  "tools": {
+    "preferred": [
+      "browser_get_network_requests_fallback",
+      "browser_get_performance_metrics_fallback",
+      "browser_inspect_element_fallback",
+      "browser_evaluate_javascript_fallback",
+      "browser_get_memory_usage_fallback",
+      "browser_get_storage_data_fallback",
+      "browser_get_console_logs_fallback",
+      "browser_navigate_fallback",
+      "browser_get_page_info_fallback",
+      "browser_health_check",
+      "browser_set_mode"
+    ],
+    "categories": {
+      "browser_automation": [
+        "browser_navigate_fallback",
+        "browser_get_page_info_fallback",
+        "browser_health_check"
+      ],
+      "network_analysis": [
+        "browser_get_network_requests_fallback",
+        "browser_clear_network_log_fallback"
+      ],
+      "performance_analysis": [
+        "browser_get_performance_metrics_fallback",
+        "browser_get_memory_usage_fallback"
+      ],
+      "dom_inspection": [
+        "browser_inspect_element_fallback",
+        "browser_evaluate_javascript_fallback"
+      ],
+      "data_extraction": [
+        "browser_get_storage_data_fallback",
+        "browser_get_console_logs_fallback"
+      ]
+    }
+  },
+  
+  "prompts": {
+    "browser_health": "檢查瀏覽器自動化工具的健康狀態並報告任何問題",
+    "analyze_performance": "分析當前頁面的效能指標，包括 Core Web Vitals",
+    "debug_network": "取得網路請求並識別任何失敗或緩慢的請求",
+    "extract_data": "從當前頁面提取儲存資料和控制台記錄",
+    "inspect_dom": "檢查指定的 DOM 元素並分析其屬性和樣式"
+  },
+  
+  "aliases": {
+    "bmcp": "browser_health_check",
+    "perf": "browser_get_performance_metrics_fallback",
+    "net": "browser_get_network_requests_fallback",
+    "inspect": "browser_inspect_element_fallback",
+    "nav": "browser_navigate_fallback"
+  }
+}

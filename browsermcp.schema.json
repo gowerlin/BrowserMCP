@@ -1,0 +1,158 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BrowserMCP Configuration",
+  "description": "BrowserMCP 配置檔案 Schema",
+  "type": "object",
+  "properties": {
+    "fallback": {
+      "description": "備援模式設定",
+      "type": "object",
+      "properties": {
+        "mode": {
+          "description": "備援模式：extension (僅 Chrome Extension), puppeteer (僅 Puppeteer), auto (智能切換)",
+          "type": "string",
+          "enum": ["extension", "puppeteer", "auto"],
+          "default": "auto"
+        },
+        "extensionTimeout": {
+          "description": "Chrome Extension 連接超時時間 (毫秒)",
+          "type": "number",
+          "minimum": 1000,
+          "maximum": 60000,
+          "default": 5000
+        },
+        "retryAttempts": {
+          "description": "操作失敗時的重試次數",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10,
+          "default": 2
+        },
+        "enableLogging": {
+          "description": "是否啟用詳細記錄",
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "websocket": {
+      "description": "WebSocket 連接設定",
+      "type": "object",
+      "properties": {
+        "url": {
+          "description": "WebSocket 伺服器 URL",
+          "type": "string",
+          "pattern": "^ws://.*",
+          "default": "ws://localhost:9002"
+        },
+        "port": {
+          "description": "WebSocket 伺服器埠號",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 9002
+        },
+        "reconnectAttempts": {
+          "description": "連接失敗時的重連次數",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10,
+          "default": 3
+        },
+        "reconnectDelay": {
+          "description": "重連延遲時間 (毫秒)",
+          "type": "number",
+          "minimum": 1000,
+          "maximum": 30000,
+          "default": 2000
+        }
+      },
+      "additionalProperties": false
+    },
+    "puppeteer": {
+      "description": "Puppeteer 設定",
+      "type": "object",
+      "properties": {
+        "headless": {
+          "description": "是否以無頭模式執行",
+          "type": "boolean",
+          "default": false
+        },
+        "viewport": {
+          "description": "瀏覽器視窗大小",
+          "type": "object",
+          "properties": {
+            "width": {
+              "description": "視窗寬度 (像素)",
+              "type": "number",
+              "minimum": 100,
+              "maximum": 4096,
+              "default": 1280
+            },
+            "height": {
+              "description": "視窗高度 (像素)",
+              "type": "number",
+              "minimum": 100,
+              "maximum": 4096,
+              "default": 720
+            }
+          },
+          "additionalProperties": false
+        },
+        "args": {
+          "description": "Puppeteer 啟動參數",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-dev-shm-usage"
+          ]
+        },
+        "timeout": {
+          "description": "Puppeteer 操作超時時間 (毫秒)",
+          "type": "number",
+          "minimum": 5000,
+          "maximum": 300000,
+          "default": 30000
+        }
+      },
+      "additionalProperties": false
+    },
+    "devtools": {
+      "description": "DevTools 功能設定",
+      "type": "object",
+      "properties": {
+        "enableNetworkMonitoring": {
+          "description": "是否啟用網路監控",
+          "type": "boolean",
+          "default": true
+        },
+        "enablePerformanceMonitoring": {
+          "description": "是否啟用效能監控",
+          "type": "boolean",
+          "default": true
+        },
+        "maxConsoleLogEntries": {
+          "description": "最大控制台記錄條目數",
+          "type": "number",
+          "minimum": 100,
+          "maximum": 10000,
+          "default": 1000
+        },
+        "maxNetworkRequestEntries": {
+          "description": "最大網路請求記錄條目數",
+          "type": "number",
+          "minimum": 100,
+          "maximum": 10000,
+          "default": 1000
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "../browsermcp.schema.json",
+  "//": "鎖定使用 Chrome Extension 的配置範例",
+  
+  "fallback": {
+    "mode": "extension",
+    "extensionTimeout": 10000,
+    "retryAttempts": 3,
+    "enableLogging": true
+  },
+  
+  "websocket": {
+    "url": "ws://localhost:9002",
+    "port": 9002,
+    "reconnectAttempts": 5,
+    "reconnectDelay": 1000
+  }
+}

@@ -44,4 +44,3 @@ create-pr.ps1
 pr-comment.txt
 *.tmp
 *.temp
-.claude/settings.local.json

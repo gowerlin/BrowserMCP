@@ -1,0 +1,27 @@
+{
+  "$schema": "../browsermcp.schema.json",
+  "//": "智能備援模式配置範例 - Extension 失敗時自動切換到 Puppeteer",
+  
+  "fallback": {
+    "mode": "auto",
+    "extensionTimeout": 3000,
+    "retryAttempts": 2,
+    "enableLogging": true
+  },
+  
+  "websocket": {
+    "url": "ws://localhost:9002",
+    "port": 9002,
+    "reconnectAttempts": 3,
+    "reconnectDelay": 2000
+  },
+  
+  "puppeteer": {
+    "headless": false,
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "timeout": 30000
+  }
+}

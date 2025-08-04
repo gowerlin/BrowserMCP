@@ -1,0 +1,141 @@
+{
+  "//": "VS Code tasks.json 範例 - 複製到 .vscode/tasks.json",
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "BrowserMCP: 啟動 (自動模式)",
+      "type": "shell",
+      "command": "npx",
+      "args": ["@browsermcp/mcp", "--auto-fallback", "--verbose"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": [],
+      "isBackground": true,
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "BrowserMCP: 啟動 (Extension 模式)",
+      "type": "shell",
+      "command": "npx",
+      "args": ["@browsermcp/mcp", "--extension-only", "--verbose"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "BrowserMCP: 啟動 (Puppeteer 模式)",
+      "type": "shell",
+      "command": "npx",
+      "args": ["@browsermcp/mcp", "--puppeteer-only", "--headless", "--verbose"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "BrowserMCP: 顯示配置",
+      "type": "shell",
+      "command": "npx",
+      "args": ["@browsermcp/mcp", "--show-config"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "BrowserMCP: 產生配置檔案",
+      "type": "shell",
+      "command": "npx",
+      "args": ["@browsermcp/mcp", "--generate-config"],
+      "group": "build",
+      "options": {
+        "shell": {
+          "executable": "bash",
+          "args": ["-c"]
+        }
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "BrowserMCP: 驗證配置",
+      "type": "shell",
+      "command": "npx",
+      "args": ["@browsermcp/mcp", "config", "--validate"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "BrowserMCP: 健康檢查",
+      "type": "shell",
+      "command": "npx",
+      "args": ["@browsermcp/mcp", "config", "--show"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "BrowserMCP: 停止所有實例",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "pkill -f 'browsermcp' || echo '沒有找到 BrowserMCP 程序'"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "安裝 BrowserMCP",
+      "type": "shell",
+      "command": "npm",
+      "args": ["install", "@browsermcp/mcp"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true
+      },
+      "problemMatcher": ["$node-sass"]
+    }
+  ]
+}

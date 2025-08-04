@@ -1,0 +1,81 @@
+{
+  "//": "VS Code settings.json 範例 - 複製需要的部分到你的 VS Code 設定中",
+  
+  "mcp.servers": {
+    "browsermcp-auto": {
+      "command": "npx",
+      "args": ["@browsermcp/mcp", "--auto-fallback", "--verbose"],
+      "env": {
+        "BROWSERMCP_FALLBACK_MODE": "auto",
+        "BROWSERMCP_ENABLE_LOGGING": "true",
+        "BROWSERMCP_WS_URL": "ws://localhost:9002"
+      }
+    },
+    "browsermcp-extension": {
+      "command": "npx", 
+      "args": ["@browsermcp/mcp", "--extension-only"],
+      "env": {
+        "BROWSERMCP_FALLBACK_MODE": "extension",
+        "BROWSERMCP_EXTENSION_TIMEOUT": "10000"
+      }
+    },
+    "browsermcp-puppeteer": {
+      "command": "npx",
+      "args": ["@browsermcp/mcp", "--puppeteer-only", "--headless"],
+      "env": {
+        "BROWSERMCP_FALLBACK_MODE": "puppeteer",
+        "BROWSERMCP_PUPPETEER_HEADLESS": "true"
+      }
+    }
+  },
+  
+  "mcp.clientOptions": {
+    "capabilities": {
+      "experimental": {
+        "supportsMultipleServers": true
+      }
+    }
+  },
+  
+  "//github-copilot": "GitHub Copilot 整合設定",
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": true,
+    "plaintext": true,
+    "markdown": true
+  },
+  "github.copilot.chat.enabled": true,
+  "github.copilot.chat.context": {
+    "browsermcp": {
+      "description": "瀏覽器自動化上下文",
+      "command": "npx @browsermcp/mcp --show-config"
+    }
+  },
+  
+  "//other-useful-settings": "其他有用的 VS Code 設定",
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "terminal.integrated.profiles.windows": {
+    "Git Bash": {
+      "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+      "args": ["-l"],
+      "env": {
+        "BROWSERMCP_FALLBACK_MODE": "auto"
+      }
+    }
+  },
+  
+  "files.associations": {
+    "browsermcp.config.json": "jsonc",
+    ".browsermcp.json": "jsonc"
+  },
+  
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "browsermcp.config.json",
+        ".browsermcp.json"
+      ],
+      "url": "./browsermcp.schema.json"
+    }
+  ]
+}

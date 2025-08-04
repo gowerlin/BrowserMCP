@@ -1,0 +1,26 @@
+{
+  "$schema": "../browsermcp.schema.json",
+  "//": "預設使用 Puppeteer 的配置範例",
+  
+  "fallback": {
+    "mode": "puppeteer",
+    "retryAttempts": 1,
+    "enableLogging": true
+  },
+  
+  "puppeteer": {
+    "headless": true,
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "timeout": 60000
+  },
+  
+  "devtools": {
+    "enableNetworkMonitoring": true,
+    "enablePerformanceMonitoring": true,
+    "maxConsoleLogEntries": 500,
+    "maxNetworkRequestEntries": 500
+  }
+}

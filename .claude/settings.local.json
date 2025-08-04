@@ -18,7 +18,14 @@
       "Bash(npm run typecheck:*)",
       "Bash(npm test)",
       "Bash(node:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(find:*)",
+      "Bash(npx mocha test/puppeteer-fallback.test.cjs:*)",
+      "Bash(set BROWSERMCP_FALLBACK_MODE=puppeteer)",
+      "Bash(set BROWSERMCP_PUPPETEER_HEADLESS=true)",
+      "Bash($env:BROWSERMCP_FALLBACK_MODE=\"puppeteer\")",
+      "Bash($env:BROWSERMCP_PUPPETEER_HEADLESS=\"true\")",
+      "Bash(BROWSERMCP_FALLBACK_MODE=puppeteer BROWSERMCP_PUPPETEER_HEADLESS=true node dist/index.js --show-config)"
     ],
     "deny": []
   }

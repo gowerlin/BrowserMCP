@@ -1,6 +1,31 @@
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { z } from "zod";
 import type { Tool } from "./tool";
+import { 
+  NetworkRequestsParams, 
+  InspectElementParams, 
+  JavaScriptEvaluationParams, 
+  StorageDataParams,
+  ApiResponse,
+  NetworkRequest,
+  PerformanceMetrics,
+  ElementInfo,
+  JavaScriptResult,
+  MemoryUsage,
+  HeapSnapshotSummary,
+  SecurityInfo,
+  StorageData,
+  ConsoleMessage,
+  CoverageData,
+  ProfileData
+} from '../types/devtools-types.js';
+import { 
+  errorHandler, 
+  ErrorCode, 
+  createSuccessResponse, 
+  createErrorResponse,
+  ChromeExtensionErrorHandler 
+} from '../utils/error-handler.js';
 
 // Network 監控相關 Schema
 const GetNetworkRequestsTool = z.object({
@@ -149,11 +174,21 @@ export const clearNetworkLog: Tool = {
     inputSchema: zodToJsonSchema(ClearNetworkLogTool.shape.arguments),
   },
   handle: async (context, _params) => {
-    await context.sendSocketMessage("browser_clear_network_log", {});
+    const response = await errorHandler.wrapAsync(
+      async () => {
+        const result = await context.sendSocketMessage("browser_clear_network_log", {});
+        return { success: true, message: "Network log cleared successfully", timestamp: Date.now() };
+      },
+      ErrorCode.NETWORK_REQUEST_FAILED,
+      'Failed to clear network log',
+      'DevTools:Network',
+      5000
+    );
+
     return {
       content: [{
         type: "text",
-        text: "Network log cleared",
+        text: JSON.stringify(response.success ? response.data : response.error, null, 2),
       }],
     };
   },

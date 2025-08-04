@@ -1,10 +1,34 @@
-# 🚀 Browser MCP v0.2.0 - Complete DevTools Integration
+# 🚀 Browser MCP v0.2.0 - Complete DevTools Integration & Smart Fallback System
 
-A major release introducing comprehensive Chrome DevTools Protocol integration with bilingual documentation and cross-platform compatibility improvements.
+A major release introducing complete Chrome DevTools Protocol integration with intelligent fallback system between Chrome Extension and Puppeteer modes, comprehensive configuration management, and enhanced development environment support.
 
 ## 🆕 New Features
 
-### DevTools Integration
+### Smart Fallback System
+- **🔄 Automatic Mode Switching**: Seamlessly switch between Chrome Extension and Puppeteer modes
+- **⚡ Extension-First Approach**: Prioritizes fast Chrome Extension when available
+- **🛡️ Puppeteer Backup**: Automatically falls back to Puppeteer when extension is unavailable
+- **⚙️ Configurable Modes**: Manual control with `extension`, `puppeteer`, or `auto` mode
+- **📊 Health Monitoring**: Real-time status of both Extension and Puppeteer systems
+- **🔧 Zero Configuration**: Works out-of-the-box with intelligent defaults
+
+### Configuration Management
+- **🎛️ Multi-Layer Configuration**: Command line > Environment variables > Config files > Defaults
+- **📋 Runtime Mode Switching**: Change modes during execution without restart
+- **📄 JSON Schema Validation**: Configuration validation with comprehensive schema
+- **🔧 Command-Line Interface**: Rich CLI with `--show-config`, `--generate-config`, mode controls
+- **🌍 Environment Variables**: Full support with `BROWSERMCP_` prefix
+- **📝 Configuration Examples**: Complete examples for all modes and use cases
+
+### Development Environment Integration
+- **💻 VS Code Integration**: MCP extension support with multiple server configurations
+- **🤖 Claude Code CLI**: Complete configuration with tool aliases and categories
+- **🐱 GitHub Copilot**: Workspace integration with context awareness
+- **🛠️ Git Bash Support**: Automated setup script with helper functions
+- **🐧 WSL Integration**: Full Windows Subsystem for Linux compatibility
+- **📚 Bilingual Documentation**: English and Traditional Chinese guides for all integrations
+
+### Complete DevTools Integration (New in v0.2.0)
 - **🔧 13 Advanced Tools**: Complete Chrome DevTools Protocol (CDP) integration
 - **🌐 Network Monitoring**: Track and analyze HTTP requests, responses, and performance metrics
 - **⚡ Performance Analysis**: Core Web Vitals, profiling, and memory analysis
@@ -14,12 +38,14 @@ A major release introducing comprehensive Chrome DevTools Protocol integration w
 - **🔐 Security Analysis**: Certificate validation and security state inspection
 - **🗄️ Storage Management**: Access localStorage, sessionStorage, cookies, and IndexedDB
 - **📝 Console Monitoring**: Comprehensive console log collection and analysis
+- **🔄 Fallback Support**: All DevTools functions now work with both Extension and Puppeteer
 
-### Browser Extension
+### Browser Extension (Enhanced)
 - **🎯 Chrome Extension**: Professional-grade browser extension with WebSocket bridge
 - **🌉 Message Bridge**: Seamless communication between MCP server and browser
 - **🎨 User Interface**: Intuitive popup interface for connection management
 - **⚙️ Background Service**: Efficient background processing with CDP handlers
+- **🔄 Auto-Recovery**: Automatic reconnection on connection loss
 
 ## 📚 Documentation & Localization
 
@@ -27,12 +53,15 @@ A major release introducing comprehensive Chrome DevTools Protocol integration w
 - **📖 English Documentation**: Complete English documentation as default
 - **🇹🇼 Traditional Chinese**: Full Traditional Chinese documentation support
 - **🔗 Easy Navigation**: All documents provide bilingual access links
+- **📄 Comprehensive Coverage**: 12+ documentation files covering all aspects
 
-### Comprehensive Guides
-- **Installation Guides**: Step-by-step installation for all platforms
-- **API Documentation**: Complete DevTools API reference
-- **Compatibility Docs**: Cross-platform compatibility information
-- **Usage Examples**: Practical examples and code snippets
+### Documentation Structure
+- **Core Guides**: Installation, Configuration, Integration, Compatibility
+- **API Documentation**: Complete DevTools API reference with examples
+- **Troubleshooting**: Comprehensive troubleshooting guide with common issues
+- **Configuration Examples**: 9+ working examples for different environments
+- **Integration Guides**: VS Code, Claude Code CLI, Git Bash, WSL setup guides
+- **Schema Documentation**: JSON Schema for configuration validation
 
 ## 🔧 Cross-Platform Compatibility
 
@@ -77,8 +106,13 @@ npm install
 # Build the project
 npm run build
 
-# Run tests
-npm test
+# Run with smart fallback (default)
+npm start
+
+# Or use specific modes
+mcp-server-browsermcp --extension-only  # Chrome Extension only
+mcp-server-browsermcp --puppeteer-only  # Puppeteer only
+mcp-server-browsermcp --auto-fallback  # Smart auto-switching
 ```
 
 ### Browser Extension
@@ -87,24 +121,43 @@ npm test
 3. Click "Load unpacked" and select the `browser-extension/` folder
 4. Pin the extension to your toolbar
 
+### Configuration
+```bash
+# Generate configuration file
+mcp-server-browsermcp --generate-config > browsermcp.config.json
+
+# Show current configuration
+mcp-server-browsermcp --show-config
+```
+
 ## 📈 What's Changed
 
 ### Added
+- Smart fallback system between Chrome Extension and Puppeteer
+- Multi-layer configuration management system
+- Runtime mode switching capability
 - Complete Chrome DevTools Protocol integration
-- 13 new DevTools tool functions
+- 13 new DevTools tool functions with fallback support
 - Professional browser extension with WebSocket bridge
+- Comprehensive development environment integration guides
+- VS Code, Claude Code CLI, Git Bash, WSL configuration examples
+- Automated Git Bash setup script
+- JSON Schema for configuration validation
 - Bilingual documentation system (English/Traditional Chinese)
 - Cross-platform shell environment detection
-- Comprehensive test suite
-- Installation and compatibility guides
-- Example configuration files
+- Comprehensive test suite including fallback tests
+- 9+ working configuration examples
 
 ### Improved
-- Enhanced error handling and logging
-- Better cross-platform compatibility
-- Optimized port management
-- Improved documentation structure
-- Better TypeScript integration
+- Enhanced error handling with standardized error types
+- Better cross-platform compatibility with intelligent detection
+- Optimized port management across different shells
+- Improved documentation structure with clear categorization
+- Better TypeScript integration with strict typing
+- Configuration system with validation and defaults
+- DevTools functions now support both Extension and Puppeteer
+- WebSocket connection stability and auto-reconnection
+- Resource management and cleanup
 
 ### Fixed
 - Windows Git Bash compatibility issues
@@ -115,12 +168,16 @@ npm test
 
 ## 🔗 Documentation Links
 
-- **📖 [English Installation Guide](./INSTALLATION.md)**
-- **🇹🇼 [繁體中文安裝指南](./INSTALLATION.zh-TW.md)**
-- **📖 [DevTools Documentation](./docs/DEVTOOLS.md)**
-- **🇹🇼 [DevTools 繁體中文文檔](./docs/DEVTOOLS.zh-TW.md)**
-- **📖 [Compatibility Documentation](./docs/COMPATIBILITY.md)**
-- **🇹🇼 [相容性繁體中文文檔](./docs/COMPATIBILITY.zh-TW.md)**
+### Core Documentation
+- **📖 [English Installation Guide](./INSTALLATION.md)** | **🇹🇼 [繁體中文安裝指南](./INSTALLATION.zh-TW.md)**
+- **⚙️ [Configuration Guide](./docs/CONFIGURATION.md)** | **🇹🇼 [配置指南](./docs/CONFIGURATION.zh-TW.md)**
+- **🔧 [Integration Guide](./docs/INTEGRATIONS.md)** | **🇹🇼 [整合指南](./docs/INTEGRATIONS.zh-TW.md)**
+- **🔄 [Compatibility Guide](./docs/COMPATIBILITY.md)** | **🇹🇼 [相容性指南](./docs/COMPATIBILITY.zh-TW.md)**
+
+### Technical Documentation
+- **📖 [DevTools Documentation](./docs/DEVTOOLS.md)** | **🇹🇼 [DevTools 文檔](./docs/DEVTOOLS.zh-TW.md)**
+- **💡 [API Examples](./docs/API-EXAMPLES.md)** | **🇹🇼 [API 範例](./docs/API-EXAMPLES.zh-TW.md)**
+- **🔧 [Troubleshooting Guide](./docs/TROUBLESHOOTING.md)** | **🇹🇼 [故障排除指南](./docs/TROUBLESHOOTING.zh-TW.md)**
 
 ## 🙏 Credits
 

@@ -1,0 +1,85 @@
+{
+  "//": "VS Code launch.json 範例 - 複製到 .vscode/launch.json",
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "除錯 BrowserMCP (自動模式)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/@browsermcp/mcp/dist/index.js",
+      "args": ["--auto-fallback", "--verbose", "--show-config"],
+      "env": {
+        "BROWSERMCP_FALLBACK_MODE": "auto",
+        "BROWSERMCP_ENABLE_LOGGING": "true",
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/node_modules/@browsermcp/mcp/dist/**/*.js"
+      ]
+    },
+    {
+      "name": "除錯 BrowserMCP (Extension 模式)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/@browsermcp/mcp/dist/index.js",
+      "args": ["--extension-only", "--verbose"],
+      "env": {
+        "BROWSERMCP_FALLBACK_MODE": "extension",
+        "BROWSERMCP_EXTENSION_TIMEOUT": "10000",
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "除錯 BrowserMCP (Puppeteer 模式)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/@browsermcp/mcp/dist/index.js",
+      "args": ["--puppeteer-only", "--no-headless", "--verbose"],
+      "env": {
+        "BROWSERMCP_FALLBACK_MODE": "puppeteer",
+        "BROWSERMCP_PUPPETEER_HEADLESS": "false",
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "除錯 BrowserMCP (自訂配置)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/@browsermcp/mcp/dist/index.js",
+      "args": ["--config", "${workspaceFolder}/browsermcp.config.json", "--verbose"],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "附加到 BrowserMCP 程序",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "skipFiles": ["<node_internals>/**"],
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "${workspaceFolder}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "啟動 BrowserMCP 並附加除錯器",
+      "configurations": [
+        "除錯 BrowserMCP (自動模式)"
+      ],
+      "stopAll": true
+    }
+  ]
+}
