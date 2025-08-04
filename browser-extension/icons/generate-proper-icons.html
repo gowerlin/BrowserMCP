@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Browser MCP Icon Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .icon-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .icon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        canvas {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto 15px;
+        }
+        .size-label {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: opacity 0.3s;
+        }
+        .download-btn:hover {
+            opacity: 0.9;
+        }
+        .instructions {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .instructions ol {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 Browser MCP Icon Generator</h1>
+        
+        <div class="instructions">
+            <h3>📋 Instructions:</h3>
+            <ol>
+                <li>The icons are automatically generated when you open this page</li>
+                <li>Right-click each icon and select "Save image as..."</li>
+                <li>Save with the exact filename shown (icon-16.png, icon-32.png, etc.)</li>
+                <li>Save all files in the browser-extension/icons/ folder</li>
+                <li>Reload the extension in Chrome to see the new icons</li>
+            </ol>
+        </div>
+
+        <div class="icon-grid">
+            <div class="icon-card">
+                <div class="size-label">16×16 pixels</div>
+                <canvas id="icon16" width="16" height="16"></canvas>
+                <div style="color: #666; font-size: 12px; margin-bottom: 10px;">Save as: icon-16.png</div>
+            </div>
+            
+            <div class="icon-card">
+                <div class="size-label">32×32 pixels</div>
+                <canvas id="icon32" width="32" height="32"></canvas>
+                <div style="color: #666; font-size: 12px; margin-bottom: 10px;">Save as: icon-32.png</div>
+            </div>
+            
+            <div class="icon-card">
+                <div class="size-label">48×48 pixels</div>
+                <canvas id="icon48" width="48" height="48"></canvas>
+                <div style="color: #666; font-size: 12px; margin-bottom: 10px;">Save as: icon-48.png</div>
+            </div>
+            
+            <div class="icon-card">
+                <div class="size-label">128×128 pixels</div>
+                <canvas id="icon128" width="128" height="128"></canvas>
+                <div style="color: #666; font-size: 12px; margin-bottom: 10px;">Save as: icon-128.png</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function drawIcon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size (for high DPI displays)
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#4A90E2');
+            gradient.addColorStop(1, '#357ABD');
+            
+            // Draw rounded rectangle background
+            const radius = size * 0.15;
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.lineTo(size - radius, 0);
+            ctx.quadraticCurveTo(size, 0, size, radius);
+            ctx.lineTo(size, size - radius);
+            ctx.quadraticCurveTo(size, size, size - radius, size);
+            ctx.lineTo(radius, size);
+            ctx.quadraticCurveTo(0, size, 0, size - radius);
+            ctx.lineTo(0, radius);
+            ctx.quadraticCurveTo(0, 0, radius, 0);
+            ctx.closePath();
+            
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Add subtle shadow
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+            ctx.shadowBlur = size * 0.1;
+            ctx.shadowOffsetY = size * 0.05;
+            
+            // Draw browser window icon
+            const windowSize = size * 0.5;
+            const windowX = (size - windowSize) / 2;
+            const windowY = size * 0.2;
+            
+            // Browser window background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(windowX, windowY, windowSize, windowSize * 0.7);
+            
+            // Browser window top bar
+            ctx.fillStyle = '#E8F1F8';
+            ctx.fillRect(windowX, windowY, windowSize, windowSize * 0.2);
+            
+            // Browser control dots (only for larger sizes)
+            if (size >= 32) {
+                const dotSize = size * 0.03;
+                const dotY = windowY + windowSize * 0.1;
+                
+                // Red dot
+                ctx.fillStyle = '#FF5F57';
+                ctx.beginPath();
+                ctx.arc(windowX + windowSize * 0.15, dotY, dotSize, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Yellow dot
+                ctx.fillStyle = '#FFBD2E';
+                ctx.beginPath();
+                ctx.arc(windowX + windowSize * 0.3, dotY, dotSize, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Green dot
+                ctx.fillStyle = '#28CA42';
+                ctx.beginPath();
+                ctx.arc(windowX + windowSize * 0.45, dotY, dotSize, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Reset shadow for text
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetY = 0;
+            
+            // Draw text
+            ctx.fillStyle = '#2C5282';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            if (size === 16) {
+                // Just "M" for tiny size
+                ctx.font = 'bold ' + (size * 0.5) + 'px Arial';
+                ctx.fillText('M', size / 2, windowY + windowSize * 0.55);
+            } else if (size === 32) {
+                // "MCP" in smaller font
+                ctx.font = 'bold ' + (size * 0.25) + 'px Arial';
+                ctx.fillText('MCP', size / 2, windowY + windowSize * 0.55);
+            } else {
+                // Full "MCP" text
+                ctx.font = 'bold ' + (size * 0.2) + 'px Arial';
+                ctx.fillText('MCP', size / 2, windowY + windowSize * 0.55);
+                
+                // Add "Browser" text for larger icons
+                if (size >= 128) {
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold ' + (size * 0.09) + 'px Arial';
+                    ctx.fillText('BROWSER', size / 2, size * 0.85);
+                }
+            }
+        }
+        
+        // Generate all icons
+        drawIcon('icon16', 16);
+        drawIcon('icon32', 32);
+        drawIcon('icon48', 48);
+        drawIcon('icon128', 128);
+        
+        // Optional: Add click to download functionality
+        document.querySelectorAll('canvas').forEach(canvas => {
+            canvas.addEventListener('click', function() {
+                const link = document.createElement('a');
+                link.download = this.id + '.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        });
+    </script>
+</body>
+</html>
