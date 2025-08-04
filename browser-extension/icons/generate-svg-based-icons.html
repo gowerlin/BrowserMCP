@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Browser MCP Icon Generator - Based on SVG</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #4A90E2 0%, #2E5C8A 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .icon-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .icon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto 15px;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        .size-label {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .filename {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            background: #e9ecef;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .instructions {
+            background: #E8F4FD;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px solid #4A90E2;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #2E5C8A;
+        }
+        .instructions ol {
+            color: #555;
+        }
+        .download-all {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .download-all button {
+            background: linear-gradient(135deg, #4A90E2 0%, #2E5C8A 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        .download-all button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 Browser MCP Icon Generator</h1>
+        <h2 style="text-align: center; color: #666;">Based on Original SVG Design</h2>
+        
+        <div class="instructions">
+            <h3>📋 Instructions:</h3>
+            <ol>
+                <li>Click on any icon to download it individually</li>
+                <li>Or right-click and select "Save image as..."</li>
+                <li>Save with the exact filename shown (icon-16.png, icon-32.png, etc.)</li>
+                <li>Save all files in the browser-extension/icons/ folder</li>
+                <li>Reload the extension in Chrome to see the new icons</li>
+            </ol>
+        </div>
+
+        <div class="icon-grid">
+            <div class="icon-card">
+                <div class="size-label">16×16 pixels</div>
+                <canvas id="icon16" width="16" height="16"></canvas>
+                <div class="filename">icon-16.png</div>
+            </div>
+            
+            <div class="icon-card">
+                <div class="size-label">32×32 pixels</div>
+                <canvas id="icon32" width="32" height="32"></canvas>
+                <div class="filename">icon-32.png</div>
+            </div>
+            
+            <div class="icon-card">
+                <div class="size-label">48×48 pixels</div>
+                <canvas id="icon48" width="48" height="48"></canvas>
+                <div class="filename">icon-48.png</div>
+            </div>
+            
+            <div class="icon-card">
+                <div class="size-label">128×128 pixels</div>
+                <canvas id="icon128" width="128" height="128"></canvas>
+                <div class="filename">icon-128.png</div>
+            </div>
+        </div>
+
+        <div class="icon-grid" style="margin-top: 50px;">
+            <div class="icon-card" style="grid-column: span 2;">
+                <div class="size-label">Original SVG (for reference)</div>
+                <div style="background: white; padding: 10px; border-radius: 8px; border: 2px solid #ddd;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" style="display: block; margin: 0 auto;">
+                        <!-- Background Circle -->
+                        <circle cx="64" cy="64" r="60" fill="#4A90E2" stroke="#2E5C8A" stroke-width="2"/>
+                        
+                        <!-- Browser Window -->
+                        <rect x="30" y="35" width="68" height="50" rx="4" fill="#FFFFFF" stroke="#2E5C8A" stroke-width="2"/>
+                        
+                        <!-- Browser Top Bar -->
+                        <rect x="30" y="35" width="68" height="12" rx="4" fill="#E8F4FD"/>
+                        
+                        <!-- Browser Control Dots -->
+                        <circle cx="38" cy="41" r="2" fill="#FF5F57"/>
+                        <circle cx="46" cy="41" r="2" fill="#FFBD2E"/>
+                        <circle cx="54" cy="41" r="2" fill="#28CA42"/>
+                        
+                        <!-- Code Symbol -->
+                        <text x="64" y="70" font-family="Courier, monospace" font-size="20" font-weight="bold" text-anchor="middle" fill="#2E5C8A">&lt;/&gt;</text>
+                        
+                        <!-- MCP Label -->
+                        <text x="64" y="100" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">MCP</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function drawIcon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const scale = size / 128;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Enable antialiasing for small sizes
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Save context and scale
+            ctx.save();
+            ctx.scale(scale, scale);
+            
+            // Background Circle
+            ctx.fillStyle = '#4A90E2';
+            ctx.strokeStyle = '#2E5C8A';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(64, 64, 60, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Browser Window Background
+            ctx.fillStyle = '#FFFFFF';
+            ctx.strokeStyle = '#2E5C8A';
+            ctx.lineWidth = 2;
+            
+            // Draw rounded rectangle for browser window
+            const x = 30, y = 35, w = 68, h = 50, r = 4;
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Browser Top Bar
+            ctx.fillStyle = '#E8F4FD';
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + 12);
+            ctx.lineTo(x, y + 12);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Browser Control Dots (only for sizes >= 32)
+            if (size >= 32) {
+                // Red dot
+                ctx.fillStyle = '#FF5F57';
+                ctx.beginPath();
+                ctx.arc(38, 41, 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Yellow dot
+                ctx.fillStyle = '#FFBD2E';
+                ctx.beginPath();
+                ctx.arc(46, 41, 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Green dot
+                ctx.fillStyle = '#28CA42';
+                ctx.beginPath();
+                ctx.arc(54, 41, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Code Symbol </> 
+            ctx.fillStyle = '#2E5C8A';
+            ctx.font = 'bold 20px Courier, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            if (size >= 32) {
+                ctx.fillText('</>', 64, 70);
+            } else {
+                // For 16x16, use smaller text or symbol
+                ctx.font = 'bold 24px Courier, monospace';
+                ctx.fillText('<>', 64, 68);
+            }
+            
+            // MCP Label (only for sizes >= 48)
+            if (size >= 48) {
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 14px Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('MCP', 64, 100);
+            }
+            
+            // Restore context
+            ctx.restore();
+        }
+        
+        // Generate all icons
+        drawIcon('icon16', 16);
+        drawIcon('icon32', 32);
+        drawIcon('icon48', 48);
+        drawIcon('icon128', 128);
+        
+        // Add click to download functionality
+        document.querySelectorAll('canvas').forEach(canvas => {
+            canvas.addEventListener('click', function() {
+                const link = document.createElement('a');
+                link.download = this.id + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+            
+            // Add hover effect
+            canvas.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1)';
+                this.style.transition = 'transform 0.2s';
+            });
+            
+            canvas.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
