@@ -73,12 +73,20 @@ async function connectToTab(tabId) {
     
     // Attach debugger
     await attachDebugger(tabId);
+    console.log('Debugger attached successfully');
     
-    // Setup WebSocket connection
-    await setupWebSocket();
+    // Setup WebSocket connection (optional, may fail if server not running)
+    try {
+      await setupWebSocket();
+      console.log('WebSocket connected successfully');
+    } catch (wsError) {
+      console.warn('WebSocket connection failed (server may not be running):', wsError.message);
+      // Continue without WebSocket - extension can still work for local operations
+    }
     
     // Enable DevTools domains
     await enableDevToolsDomains();
+    console.log('DevTools domains enabled');
     
     isConnected = true;
     
@@ -95,9 +103,24 @@ async function connectToTab(tabId) {
     chrome.action.setBadgeText({ text: "ON" });
     chrome.action.setBadgeBackgroundColor({ color: "#4CAF50" });
     
+    console.log('Extension connected successfully to tab:', tabId);
     return { success: true };
   } catch (error) {
     console.error('Failed to connect:', error);
+    
+    // Clean up on failure
+    if (debuggeeAttached) {
+      try {
+        await chrome.debugger.detach({ tabId: tabId });
+        debuggeeAttached = false;
+      } catch (e) {
+        // Ignore cleanup errors
+      }
+    }
+    
+    currentTabId = null;
+    isConnected = false;
+    
     return { success: false, error: error.message };
   }
 }
@@ -184,26 +207,43 @@ async function attachDebugger(tabId) {
  */
 async function setupWebSocket() {
   return new Promise((resolve, reject) => {
-    ws = new WebSocket(WS_URL);
+    const timeout = setTimeout(() => {
+      if (ws) {
+        ws.close();
+        ws = null;
+      }
+      reject(new Error('WebSocket connection timeout (server may not be running)'));
+    }, 3000); // 3 second timeout
     
-    ws.onopen = () => {
-      console.log('WebSocket connected');
-      resolve();
-    };
-    
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      reject(error);
-    };
-    
-    ws.onclose = () => {
-      console.log('WebSocket disconnected');
+    try {
+      ws = new WebSocket(WS_URL);
+      
+      ws.onopen = () => {
+        clearTimeout(timeout);
+        console.log('WebSocket connected');
+        resolve();
+      };
+      
+      ws.onerror = (error) => {
+        clearTimeout(timeout);
+        console.error('WebSocket error:', error);
+        ws = null;
+        reject(new Error('WebSocket connection failed'));
+      };
+      
+      ws.onclose = () => {
+        console.log('WebSocket disconnected');
+        ws = null;
+      };
+      
+      ws.onmessage = (event) => {
+        handleWebSocketMessage(event.data);
+      };
+    } catch (error) {
+      clearTimeout(timeout);
       ws = null;
-    };
-    
-    ws.onmessage = (event) => {
-      handleWebSocketMessage(event.data);
-    };
+      reject(error);
+    }
   });
 }
 
@@ -218,12 +258,31 @@ async function enableDevToolsDomains() {
     'DOM',
     'CSS',
     'Console',
-    'Performance',
-    'Security'
+    'Performance'
+    // Note: Security domain is not always available, removed to prevent errors
   ];
   
   for (const domain of domains) {
-    await executeDevToolsCommand(`${domain}.enable`, {});
+    try {
+      await executeDevToolsCommand(`${domain}.enable`, {});
+      console.log(`Enabled ${domain} domain`);
+    } catch (error) {
+      // Some domains might not be available in all contexts
+      console.warn(`Could not enable ${domain} domain:`, error.message);
+      // Continue with other domains
+    }
+  }
+  
+  // Try to enable optional domains that might not be available
+  const optionalDomains = ['Security', 'ServiceWorker', 'Storage'];
+  for (const domain of optionalDomains) {
+    try {
+      await executeDevToolsCommand(`${domain}.enable`, {});
+      console.log(`Enabled optional ${domain} domain`);
+    } catch (error) {
+      // These are optional, so we just log and continue
+      console.log(`Optional domain ${domain} not available`);
+    }
   }
 }
 
