@@ -17,7 +17,8 @@
   
   "host_permissions": [
     "http://*/*",
-    "https://*/*"
+    "https://*/*",
+    "file:///*"
   ],
   
   "background": {

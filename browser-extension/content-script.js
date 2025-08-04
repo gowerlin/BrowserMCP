@@ -5,8 +5,16 @@
 
 // Establish connection with background script
 let port = null;
+let isExtensionValid = true;
 
 function connectToBackground() {
+  // Check if extension context is still valid
+  if (!chrome.runtime?.id) {
+    console.warn('Extension context is invalid. The extension may need to be reloaded.');
+    isExtensionValid = false;
+    return;
+  }
+  
   try {
     port = chrome.runtime.connect({ name: 'content-script' });
     
@@ -15,14 +23,32 @@ function connectToBackground() {
     });
     
     port.onDisconnect.addListener(() => {
-      console.log('Disconnected from background script, attempting reconnect...');
-      setTimeout(connectToBackground, 1000);
+      console.log('Disconnected from background script');
+      port = null;
+      
+      // Only attempt reconnect if extension context is still valid
+      if (chrome.runtime?.id) {
+        console.log('Attempting to reconnect...');
+        setTimeout(connectToBackground, 1000);
+      } else {
+        console.warn('Extension context invalidated. Please reload the extension.');
+        isExtensionValid = false;
+      }
     });
     
     console.log('Connected to Browser MCP background script');
+    isExtensionValid = true;
   } catch (error) {
-    console.error('Failed to connect to background script:', error);
-    setTimeout(connectToBackground, 1000);
+    if (error.message?.includes('Extension context invalidated')) {
+      console.warn('Extension context is invalid. Please reload the extension and refresh this page.');
+      isExtensionValid = false;
+    } else {
+      console.error('Failed to connect to background script:', error);
+      // Only retry if the extension context is still valid
+      if (chrome.runtime?.id) {
+        setTimeout(connectToBackground, 1000);
+      }
+    }
   }
 }
 
@@ -271,6 +297,19 @@ window.addEventListener('message', async (event) => {
   if (event.data && event.data.type === 'browserMCP-request') {
     const { messageId, action, params } = event.data;
     
+    // Check if extension context is valid
+    if (!isExtensionValid || !chrome.runtime?.id) {
+      window.postMessage({
+        type: 'browserMCP-response',
+        messageId: messageId,
+        response: {
+          success: false,
+          error: '擴充功能需要重新載入。請到 chrome://extensions/ 重新載入 BrowserMCP 擴充功能，然後重新整理此頁面。'
+        }
+      }, '*');
+      return;
+    }
+    
     try {
       // Forward the request to the background script
       const response = await chrome.runtime.sendMessage({
@@ -285,13 +324,23 @@ window.addEventListener('message', async (event) => {
         response: response
       }, '*');
     } catch (error) {
+      let errorMessage = error.message;
+      
+      // Provide more helpful error messages
+      if (error.message?.includes('Extension context invalidated')) {
+        errorMessage = '擴充功能需要重新載入。請到 chrome://extensions/ 重新載入 BrowserMCP 擴充功能。';
+        isExtensionValid = false;
+      } else if (error.message?.includes('Could not establish connection')) {
+        errorMessage = '無法連接到擴充功能背景腳本。請確認擴充功能已啟用並重新載入。';
+      }
+      
       // Send error response back to the web page
       window.postMessage({
         type: 'browserMCP-response',
         messageId: messageId,
         response: {
           success: false,
-          error: error.message
+          error: errorMessage
         }
       }, '*');
     }
