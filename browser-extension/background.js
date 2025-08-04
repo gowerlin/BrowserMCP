@@ -54,9 +54,24 @@ function handleMessage(request, sender, sendResponse) {
       break;
       
     case 'executeDevToolsCommand':
-      executeDevToolsCommand(request.command, request.params)
-        .then(result => sendResponse({ success: true, result }))
-        .catch(error => sendResponse({ success: false, error: error.message }));
+      // Ensure we have valid command and params
+      const command = request.command || request.method;
+      const params = request.params || {};
+      
+      if (!command) {
+        sendResponse({ success: false, error: 'No command specified' });
+        break;
+      }
+      
+      executeDevToolsCommand(command, params)
+        .then(result => {
+          console.log('Command successful:', command);
+          sendResponse({ success: true, result: result });
+        })
+        .catch(error => {
+          console.error('Command failed:', command, error);
+          sendResponse({ success: false, error: error.message });
+        });
       return true;
       
     default:
@@ -296,15 +311,23 @@ function executeDevToolsCommand(method, params = {}) {
       return;
     }
     
+    // Ensure params is an object (not null or undefined)
+    const commandParams = params || {};
+    
+    // Debug log
+    console.log('Executing DevTools command:', method, 'with params:', commandParams);
+    
     chrome.debugger.sendCommand(
       { tabId: currentTabId },
       method,
-      params,
+      commandParams,
       (result) => {
         if (chrome.runtime.lastError) {
+          console.error('DevTools command error:', chrome.runtime.lastError);
           reject(new Error(chrome.runtime.lastError.message));
         } else {
-          resolve(result);
+          console.log('DevTools command result:', result);
+          resolve(result || {});
         }
       }
     );
