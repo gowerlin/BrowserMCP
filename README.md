@@ -77,6 +77,10 @@ For technical details:
 }
 ```
 
+### Installation Guide
+- 📖 [English Installation Guide](./INSTALLATION.md)
+- 🇹🇼 [繁體中文安裝指南](./INSTALLATION.zh-TW.md)
+
 ### Advanced Configuration
 See the `examples/` directory for:
 - [`mcp-config.json`](./examples/mcp-config.json) - Basic MCP configuration

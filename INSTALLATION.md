@@ -1,48 +1,48 @@
-# Browser MCP DevTools 安裝與測試指南
+# Browser MCP DevTools Installation & Testing Guide
 
-## 📦 安裝步驟
+## 📦 Installation Steps
 
-### 1. 安裝 MCP 服務
+### 1. Install MCP Service
 
 ```bash
-# 克隆專案
+# Clone the project
 git clone https://github.com/gowerlin/BrowserMCP.git
 cd BrowserMCP
 
-# 安裝依賴
+# Install dependencies
 npm install
 
-# 編譯專案
+# Build the project
 npm run build
 
-# 測試服務
+# Test the service
 npm test
 ```
 
-### 2. 安裝瀏覽器擴充功能
+### 2. Install Browser Extension
 
-#### 開發者模式安裝
+#### Developer Mode Installation
 
-1. **開啟 Chrome 擴充功能頁面**
-   - 在網址列輸入：`chrome://extensions/`
-   - 或從選單：選單 → 更多工具 → 擴充功能
+1. **Open Chrome Extensions Page**
+   - Type in address bar: `chrome://extensions/`
+   - Or from menu: Menu → More tools → Extensions
 
-2. **啟用開發者模式**
-   - 點擊右上角的「開發者模式」開關
+2. **Enable Developer Mode**
+   - Click the "Developer mode" toggle in the top right
 
-3. **載入未封裝擴充功能**
-   - 點擊「載入未封裝項目」
-   - 選擇 `browser-extension` 資料夾
-   - 確認擴充功能已成功載入
+3. **Load Unpacked Extension**
+   - Click "Load unpacked"
+   - Select the `browser-extension` folder
+   - Confirm the extension is successfully loaded
 
-4. **釘選擴充功能**
-   - 點擊瀏覽器工具列的擴充功能圖示
-   - 找到「Browser MCP DevTools Integration」
-   - 點擊釘選圖示固定到工具列
+4. **Pin the Extension**
+   - Click the extensions icon in the browser toolbar
+   - Find "Browser MCP DevTools Integration"
+   - Click the pin icon to pin it to the toolbar
 
-### 3. 設定 MCP 連接
+### 3. Configure MCP Connection
 
-#### VS Code / Cursor 設定
+#### VS Code / Cursor Configuration
 
 ```json
 // .mcp/config.json
@@ -56,7 +56,7 @@ npm test
 }
 ```
 
-#### Claude Desktop 設定
+#### Claude Desktop Configuration
 
 ```json
 // %APPDATA%\Claude\claude_desktop_config.json (Windows)
@@ -71,35 +71,35 @@ npm test
 }
 ```
 
-## 🧪 測試步驟
+## 🧪 Testing Steps
 
-### 1. 基本連接測試
+### 1. Basic Connection Test
 
-1. **啟動 MCP 服務**
+1. **Start MCP Service**
    ```bash
    npm run watch
    ```
 
-2. **連接瀏覽器**
-   - 開啟任意網頁
-   - 點擊擴充功能圖示
-   - 點擊「連接當前標籤頁」
-   - 確認狀態顯示「已連接」
+2. **Connect Browser**
+   - Open any webpage
+   - Click the extension icon
+   - Click "Connect Current Tab"
+   - Confirm status shows "Connected"
 
-### 2. DevTools 功能測試
+### 2. DevTools Feature Testing
 
-#### Network 監控測試
+#### Network Monitoring Test
 ```javascript
-// 在 AI 工具中執行
+// Execute in AI tool
 await browser_get_network_requests({ filter: "all" });
 ```
 
-#### Performance 測試
+#### Performance Test
 ```javascript
 await browser_get_performance_metrics();
 ```
 
-#### DOM 檢查測試
+#### DOM Inspection Test
 ```javascript
 await browser_inspect_element({ 
   selector: "body",
@@ -107,75 +107,75 @@ await browser_inspect_element({
 });
 ```
 
-#### JavaScript 執行測試
+#### JavaScript Execution Test
 ```javascript
 await browser_evaluate_javascript({ 
   code: "document.title" 
 });
 ```
 
-### 3. 自動化測試
+### 3. Automated Testing
 
-執行完整測試套件：
+Run the complete test suite:
 ```bash
-# 執行 DevTools 測試
+# Run DevTools tests
 node test/devtools.test.js
 
-# 執行所有測試
+# Run all tests
 npm test
 ```
 
-## 🔍 問題排查
+## 🔍 Troubleshooting
 
-### 常見問題
+### Common Issues
 
-#### 1. 擴充功能無法連接
-- **檢查 WebSocket 埠**：確保 9002 埠未被佔用
-- **檢查防火牆**：允許 localhost:9002 連接
-- **重新載入擴充功能**：在擴充功能頁面點擊重新載入
+#### 1. Extension Cannot Connect
+- **Check WebSocket Port**: Ensure port 9002 is not in use
+- **Check Firewall**: Allow localhost:9002 connections
+- **Reload Extension**: Click reload on the extensions page
 
-#### 2. DevTools 功能無法使用
-- **檢查權限**：確保擴充功能有 debugger 權限
-- **關閉其他偵錯工具**：一次只能有一個偵錯器連接
-- **重新連接標籤頁**：斷開並重新連接
+#### 2. DevTools Features Not Working
+- **Check Permissions**: Ensure extension has debugger permissions
+- **Close Other Debuggers**: Only one debugger can connect at a time
+- **Reconnect Tab**: Disconnect and reconnect
 
-#### 3. MCP 服務無法啟動
-- **檢查 Node.js 版本**：需要 Node.js 16+
-- **重新編譯**：`npm run build`
-- **檢查路徑**：確保路徑正確且使用正斜線
+#### 3. MCP Service Cannot Start
+- **Check Node.js Version**: Requires Node.js 16+
+- **Rebuild**: `npm run build`
+- **Check Paths**: Ensure paths are correct and use forward slashes
 
-### 偵錯模式
+### Debug Mode
 
-#### 查看擴充功能日誌
-1. 在擴充功能頁面找到 Browser MCP
-2. 點擊「檢視視圖」→「背景頁面」
-3. 開啟 Console 查看日誌
+#### View Extension Logs
+1. Find Browser MCP on extensions page
+2. Click "Inspect views" → "background page"
+3. Open Console to view logs
 
-#### 查看 MCP 服務日誌
+#### View MCP Service Logs
 ```bash
-# 啟用詳細日誌
+# Enable verbose logging
 DEBUG=* npm run watch
 ```
 
-## 📊 效能建議
+## 📊 Performance Recommendations
 
-### 最佳實踐
+### Best Practices
 
-1. **限制網路請求收集**
-   - 使用 filter 參數減少資料量
-   - 定期清除網路日誌
+1. **Limit Network Request Collection**
+   - Use filter parameter to reduce data volume
+   - Clear network logs regularly
 
-2. **優化 DOM 查詢**
-   - 使用具體的選擇器
-   - 限制 maxDepth 參數
+2. **Optimize DOM Queries**
+   - Use specific selectors
+   - Limit maxDepth parameter
 
-3. **記憶體管理**
-   - 定期斷開不使用的連接
-   - 避免長時間的 profiling
+3. **Memory Management**
+   - Disconnect unused connections regularly
+   - Avoid long-running profiling
 
-## 🔗 相關資源
+## 🔗 Related Resources
 
-- [Chrome DevTools Protocol 文件](https://chromedevtools.github.io/devtools-protocol/)
-- [MCP 協定規範](https://modelcontextprotocol.io/specification)
-- [專案 GitHub](https://github.com/gowerlin/BrowserMCP)
-- [問題回報](https://github.com/gowerlin/BrowserMCP/issues)
+- [Chrome DevTools Protocol Documentation](https://chromedevtools.github.io/devtools-protocol/)
+- [MCP Protocol Specification](https://modelcontextprotocol.io/specification)
+- [Project GitHub](https://github.com/gowerlin/BrowserMCP)
+- [Issue Reporting](https://github.com/gowerlin/BrowserMCP/issues)

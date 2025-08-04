@@ -75,6 +75,10 @@ Browser MCP 是一個 MCP 伺服器 + Chrome 擴充功能，讓您可以使用 V
 }
 ```
 
+### 安裝指南
+- 📖 [English Installation Guide](./INSTALLATION.md)
+- 🇹🇼 [繁體中文安裝指南](./INSTALLATION.zh-TW.md)
+
 ### 進階設定
 請參閱 `examples/` 目錄：
 - [`mcp-config.json`](./examples/mcp-config.json) - 基本 MCP 設定
