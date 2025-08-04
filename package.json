@@ -27,11 +27,8 @@
     "zod-to-json-schema": "^3.24.3"
   },
   "devDependencies": {
-    "@r2r/messaging": "workspace:*",
-    "@repo/config": "workspace:*",
-    "@repo/messaging": "workspace:*",
-    "@repo/types": "workspace:*",
-    "@repo/utils": "workspace:*",
+    "@rollup/rollup-win32-x64-msvc": "^4.46.2",
+    "@types/node": "^20.0.0",
     "@types/ws": "^8.18.0",
     "shx": "^0.3.4",
     "tsup": "^8.4.0",
