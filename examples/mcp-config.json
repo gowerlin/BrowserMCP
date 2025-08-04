@@ -1,0 +1,38 @@
+{
+  "servers": {
+    "browsermcp": {
+      "command": "node",
+      "args": ["./dist/index.js"],
+      "description": "Cross-platform compatible browser automation (Fixed version)",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "comments": {
+    "note": "This configuration uses the locally built version with Git Bash compatibility fixes",
+    "alternatives": [
+      {
+        "description": "Use npm package (original version - has Git Bash issues)",
+        "config": {
+          "command": "npx",
+          "args": ["-y", "@browsermcp/mcp@latest"]
+        }
+      },
+      {
+        "description": "Use with absolute path",
+        "config": {
+          "command": "node",
+          "args": ["C:/path/to/BrowserMCP/dist/index.js"]
+        }
+      },
+      {
+        "description": "Use with TypeScript directly (development)",
+        "config": {
+          "command": "npx",
+          "args": ["tsx", "./src/index.ts"]
+        }
+      }
+    ]
+  }
+}

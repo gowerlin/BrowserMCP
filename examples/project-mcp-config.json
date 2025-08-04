@@ -1,0 +1,45 @@
+{
+  "comments": {
+    "description": "Project-specific MCP configuration",
+    "location": ".mcp/config.json in your project root"
+  },
+  "servers": {
+    "browsermcp": {
+      "command": "node",
+      "args": ["../../BrowserMCP/dist/index.js"],
+      "description": "Browser automation with cross-platform compatibility",
+      "env": {
+        "DEBUG": "browsermcp:*",
+        "NODE_ENV": "development"
+      }
+    }
+  },
+  "projectSettings": {
+    "browserMCP": {
+      "defaultBrowser": "chrome",
+      "headless": false,
+      "defaultTimeout": 30000,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    }
+  },
+  "alternative_configurations": {
+    "puppeteer_fallback": {
+      "description": "Use Puppeteer-based implementation as fallback",
+      "command": "node",
+      "args": ["./scripts/browser-mcp-puppeteer.mjs"]
+    },
+    "development_mode": {
+      "description": "Run in development mode with hot reload",
+      "command": "npx",
+      "args": ["nodemon", "--watch", "../../BrowserMCP/src", "--exec", "tsx", "../../BrowserMCP/src/index.ts"]
+    },
+    "docker_version": {
+      "description": "Run in Docker container",
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "browsermcp:fixed"]
+    }
+  }
+}
