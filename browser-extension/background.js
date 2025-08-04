@@ -1,190 +1,352 @@
 /**
- * Background Service Worker
- * 管理擴充功能的主要邏輯和 DevTools 整合
+ * Background Service Worker for Browser MCP
+ * Handles WebSocket connections and DevTools integration
  */
 
-import('./devtools/devtools-handler.js').then(module => {
-  const DevToolsHandler = module.default || module;
+// Global state
+let ws = null;
+let isConnected = false;
+let currentTabId = null;
+let debuggeeAttached = false;
+const WS_URL = 'ws://localhost:9002';
+
+// Network requests storage
+const networkRequests = new Map();
+const consoleLogs = [];
+
+/**
+ * Initialize the extension
+ */
+function initialize() {
+  console.log('Browser MCP Extension initialized');
   
-  import('./devtools/message-bridge.js').then(bridgeModule => {
-    const MessageBridge = bridgeModule.default || bridgeModule;
-    
-    // 全域變數
-    let devToolsHandler = null;
-    let messageBridge = null;
-    let currentTabId = null;
-    
-    // WebSocket 設定
-    const WS_URL = 'ws://localhost:9002';
-    
-    /**
-     * 初始化擴充功能
-     */
-    async function initialize() {
-      console.log('Initializing Browser MCP DevTools Extension...');
+  // Listen for messages from popup
+  chrome.runtime.onMessage.addListener(handleMessage);
+  
+  // Listen for tab updates
+  chrome.tabs.onUpdated.addListener(handleTabUpdate);
+  
+  // Listen for tab removal
+  chrome.tabs.onRemoved.addListener(handleTabRemoved);
+}
+
+/**
+ * Handle messages from popup and content scripts
+ */
+function handleMessage(request, sender, sendResponse) {
+  console.log('Received message:', request);
+  
+  switch (request.action) {
+    case 'connect':
+      connectToTab(request.tabId).then(sendResponse);
+      return true; // Will respond asynchronously
       
-      // 監聽來自 popup 的連接請求
-      chrome.runtime.onMessage.addListener(handleRuntimeMessage);
+    case 'disconnect':
+      disconnect().then(sendResponse);
+      return true;
       
-      // 監聽標籤頁更新
-      chrome.tabs.onUpdated.addListener(handleTabUpdate);
-      
-      // 監聽標籤頁關閉
-      chrome.tabs.onRemoved.addListener(handleTabRemoved);
-    }
-    
-    /**
-     * 處理運行時訊息
-     */
-    async function handleRuntimeMessage(request, sender, sendResponse) {
-      const { action, data } = request;
-      
-      switch (action) {
-        case 'connect':
-          await connectToTab(data.tabId);
-          sendResponse({ success: true });
-          break;
-          
-        case 'disconnect':
-          await disconnectFromTab();
-          sendResponse({ success: true });
-          break;
-          
-        case 'getStatus':
-          sendResponse({
-            connected: !!currentTabId,
-            tabId: currentTabId
-          });
-          break;
-          
-        default:
-          sendResponse({ error: 'Unknown action' });
-      }
-      
-      return true; // 保持訊息通道開啟
-    }
-    
-    /**
-     * 連接到指定標籤頁
-     */
-    async function connectToTab(tabId) {
-      try {
-        // 如果已連接，先斷開
-        if (currentTabId) {
-          await disconnectFromTab();
-        }
-        
-        // 建立 DevTools 處理器
-        devToolsHandler = new DevToolsHandler();
-        const initResult = await devToolsHandler.initialize(tabId);
-        
-        if (!initResult.success) {
-          throw new Error(initResult.error);
-        }
-        
-        // 建立訊息橋接器
-        messageBridge = new MessageBridge(devToolsHandler);
-        await messageBridge.connect(WS_URL);
-        
-        currentTabId = tabId;
-        
-        // 更新擴充功能圖標
-        updateExtensionIcon(true);
-        
-        console.log(`Connected to tab ${tabId}`);
-      } catch (error) {
-        console.error('Failed to connect to tab:', error);
-        throw error;
-      }
-    }
-    
-    /**
-     * 斷開連接
-     */
-    async function disconnectFromTab() {
-      if (devToolsHandler) {
-        await devToolsHandler.disconnect();
-        devToolsHandler = null;
-      }
-      
-      if (messageBridge) {
-        messageBridge.disconnect();
-        messageBridge = null;
-      }
-      
-      currentTabId = null;
-      updateExtensionIcon(false);
-      
-      console.log('Disconnected from tab');
-    }
-    
-    /**
-     * 處理標籤頁更新
-     */
-    function handleTabUpdate(tabId, changeInfo, tab) {
-      // 如果當前連接的標籤頁導航到新頁面，重新初始化
-      if (tabId === currentTabId && changeInfo.status === 'loading') {
-        console.log('Tab navigated, reinitializing DevTools...');
-        connectToTab(tabId);
-      }
-    }
-    
-    /**
-     * 處理標籤頁關閉
-     */
-    function handleTabRemoved(tabId) {
-      if (tabId === currentTabId) {
-        console.log('Connected tab closed, disconnecting...');
-        disconnectFromTab();
-      }
-    }
-    
-    /**
-     * 更新擴充功能圖標
-     */
-    function updateExtensionIcon(connected) {
-      const iconPath = connected ? 'icons/icon-active' : 'icons/icon';
-      
-      chrome.action.setIcon({
-        path: {
-          16: `${iconPath}-16.png`,
-          32: `${iconPath}-32.png`,
-          48: `${iconPath}-48.png`,
-          128: `${iconPath}-128.png`
-        }
+    case 'getStatus':
+      sendResponse({
+        connected: isConnected,
+        tabId: currentTabId,
+        wsConnected: ws && ws.readyState === WebSocket.OPEN
       });
+      break;
       
-      chrome.action.setBadgeText({
-        text: connected ? 'ON' : ''
-      });
+    case 'executeDevToolsCommand':
+      executeDevToolsCommand(request.command, request.params)
+        .then(result => sendResponse({ success: true, result }))
+        .catch(error => sendResponse({ success: false, error: error.message }));
+      return true;
       
-      chrome.action.setBadgeBackgroundColor({
-        color: '#4CAF50'
-      });
-    }
+    default:
+      sendResponse({ success: false, error: 'Unknown action' });
+  }
+}
+
+/**
+ * Connect to a tab and setup WebSocket
+ */
+async function connectToTab(tabId) {
+  try {
+    currentTabId = tabId;
     
-    /**
-     * 處理擴充功能安裝或更新
-     */
-    chrome.runtime.onInstalled.addListener((details) => {
-      console.log('Extension installed/updated:', details);
-      
-      // 設置初始狀態
-      chrome.storage.local.set({
-        devToolsEnabled: true,
-        autoConnect: false
-      });
+    // Attach debugger
+    await attachDebugger(tabId);
+    
+    // Setup WebSocket connection
+    await setupWebSocket();
+    
+    // Enable DevTools domains
+    await enableDevToolsDomains();
+    
+    isConnected = true;
+    
+    // Update icon to show connected state
+    chrome.action.setIcon({
+      path: {
+        "16": "icons/icon-16.png",
+        "32": "icons/icon-32.png",
+        "48": "icons/icon-48.png",
+        "128": "icons/icon-128.png"
+      }
     });
     
-    /**
-     * 處理擴充功能啟動
-     */
-    chrome.runtime.onStartup.addListener(() => {
-      console.log('Extension started');
-      initialize();
-    });
+    chrome.action.setBadgeText({ text: "ON" });
+    chrome.action.setBadgeBackgroundColor({ color: "#4CAF50" });
     
-    // 初始化擴充功能
-    initialize();
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to connect:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Disconnect from current tab
+ */
+async function disconnect() {
+  try {
+    if (debuggeeAttached && currentTabId) {
+      await chrome.debugger.detach({ tabId: currentTabId });
+      debuggeeAttached = false;
+    }
+    
+    if (ws) {
+      ws.close();
+      ws = null;
+    }
+    
+    isConnected = false;
+    currentTabId = null;
+    networkRequests.clear();
+    consoleLogs.length = 0;
+    
+    // Update icon to show disconnected state
+    chrome.action.setBadgeText({ text: "" });
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to disconnect:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Attach debugger to tab
+ */
+async function attachDebugger(tabId) {
+  return new Promise((resolve, reject) => {
+    chrome.debugger.attach({ tabId }, "1.3", () => {
+      if (chrome.runtime.lastError) {
+        reject(new Error(chrome.runtime.lastError.message));
+      } else {
+        debuggeeAttached = true;
+        
+        // Listen for debugger events
+        chrome.debugger.onEvent.addListener(handleDebuggerEvent);
+        
+        resolve();
+      }
+    });
   });
-});
+}
+
+/**
+ * Setup WebSocket connection
+ */
+async function setupWebSocket() {
+  return new Promise((resolve, reject) => {
+    ws = new WebSocket(WS_URL);
+    
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+      resolve();
+    };
+    
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      reject(error);
+    };
+    
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
+      ws = null;
+    };
+    
+    ws.onmessage = (event) => {
+      handleWebSocketMessage(event.data);
+    };
+  });
+}
+
+/**
+ * Enable DevTools domains
+ */
+async function enableDevToolsDomains() {
+  const domains = [
+    'Network',
+    'Page',
+    'Runtime',
+    'DOM',
+    'CSS',
+    'Console',
+    'Performance',
+    'Security'
+  ];
+  
+  for (const domain of domains) {
+    await executeDevToolsCommand(`${domain}.enable`, {});
+  }
+}
+
+/**
+ * Execute DevTools command
+ */
+function executeDevToolsCommand(method, params = {}) {
+  return new Promise((resolve, reject) => {
+    if (!currentTabId || !debuggeeAttached) {
+      reject(new Error('No tab connected'));
+      return;
+    }
+    
+    chrome.debugger.sendCommand(
+      { tabId: currentTabId },
+      method,
+      params,
+      (result) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+}
+
+/**
+ * Handle debugger events
+ */
+function handleDebuggerEvent(debuggeeId, method, params) {
+  // Store network requests
+  if (method === 'Network.requestWillBeSent') {
+    networkRequests.set(params.requestId, {
+      requestId: params.requestId,
+      url: params.request.url,
+      method: params.request.method,
+      timestamp: params.timestamp,
+      type: params.type,
+      request: params.request
+    });
+  } else if (method === 'Network.responseReceived') {
+    const request = networkRequests.get(params.requestId);
+    if (request) {
+      request.response = params.response;
+      request.responseTimestamp = params.timestamp;
+    }
+  }
+  
+  // Store console logs
+  if (method === 'Console.messageAdded') {
+    consoleLogs.push({
+      level: params.message.level,
+      text: params.message.text,
+      timestamp: Date.now(),
+      source: params.message.source
+    });
+    
+    // Limit console logs
+    if (consoleLogs.length > 1000) {
+      consoleLogs.shift();
+    }
+  }
+  
+  // Send event to WebSocket if connected
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({
+      type: 'devtools-event',
+      method,
+      params
+    }));
+  }
+}
+
+/**
+ * Handle WebSocket messages
+ */
+async function handleWebSocketMessage(data) {
+  try {
+    const message = JSON.parse(data);
+    
+    switch (message.type) {
+      case 'execute-command':
+        const result = await executeDevToolsCommand(message.method, message.params);
+        ws.send(JSON.stringify({
+          type: 'command-result',
+          id: message.id,
+          result
+        }));
+        break;
+        
+      case 'get-network-requests':
+        ws.send(JSON.stringify({
+          type: 'network-requests',
+          id: message.id,
+          requests: Array.from(networkRequests.values())
+        }));
+        break;
+        
+      case 'get-console-logs':
+        ws.send(JSON.stringify({
+          type: 'console-logs',
+          id: message.id,
+          logs: consoleLogs
+        }));
+        break;
+        
+      case 'clear-network-log':
+        networkRequests.clear();
+        ws.send(JSON.stringify({
+          type: 'command-result',
+          id: message.id,
+          result: { success: true }
+        }));
+        break;
+        
+      case 'clear-console-log':
+        consoleLogs.length = 0;
+        ws.send(JSON.stringify({
+          type: 'command-result',
+          id: message.id,
+          result: { success: true }
+        }));
+        break;
+    }
+  } catch (error) {
+    console.error('Failed to handle WebSocket message:', error);
+  }
+}
+
+/**
+ * Handle tab updates
+ */
+function handleTabUpdate(tabId, changeInfo, tab) {
+  if (tabId === currentTabId && changeInfo.status === 'loading') {
+    // Clear logs on navigation
+    networkRequests.clear();
+    consoleLogs.length = 0;
+  }
+}
+
+/**
+ * Handle tab removal
+ */
+function handleTabRemoved(tabId) {
+  if (tabId === currentTabId) {
+    disconnect();
+  }
+}
+
+// Initialize extension
+initialize();
