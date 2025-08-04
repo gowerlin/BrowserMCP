@@ -34,3 +34,13 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Claude Code local settings
+.claude/
+
+# Temporary scripts and files
+create-pr.bat
+create-pr.ps1
+pr-comment.txt
+*.tmp
+*.temp
