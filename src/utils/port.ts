@@ -1,6 +1,5 @@
 import { execSync } from "node:child_process";
 import net from "node:net";
-import os from "node:os";
 
 // Use a proper logger if available, fallback to console
 const logger = {
@@ -81,23 +80,44 @@ export function killProcessOnPort(port: number) {
         
       case "gitbash":
       case "wsl":
-        // Git Bash or WSL on Windows - use netstat with awk
+        // Git Bash or WSL on Windows - need to properly extract PID from netstat output
         try {
-          const cmd = `netstat -ano | grep ':${port}' | awk '{print $5}' | xargs -I {} kill -9 {}`;
-          execSync(cmd, { shell: "/bin/bash" });
+          // Windows netstat format: Proto Local Foreign State PID
+          // We need the 5th column (PID) from lines containing the port
+          const output = execSync(`netstat -ano | grep ':${port} '`, { shell: "/bin/bash" }).toString();
+          const lines = output.split('\n').filter(line => line.trim());
+          
+          for (const line of lines) {
+            // Extract PID from the last column
+            const columns = line.trim().split(/\s+/);
+            const pid = columns[columns.length - 1];
+            
+            if (pid && !isNaN(Number(pid)) && Number(pid) > 0) {
+              try {
+                // Use taskkill for Windows processes
+                execSync(`taskkill /F /PID ${pid} 2>/dev/null`, { shell: "/bin/bash" });
+                logger.debug(`Killed process ${pid} on port ${port}`);
+              } catch {
+                // Process might already be gone or we lack permissions
+              }
+            }
+          }
         } catch (e) {
-          // Fallback: try Windows command through cmd.exe
+          // Fallback: try direct Windows command
           try {
-            execSync(`cmd.exe /c "netstat -ano | findstr :${port}" | awk '{print $5}'`, 
-              { shell: true }
-            ).toString()
-              .split('\n')
-              .filter(pid => pid && !isNaN(Number(pid)))
-              .forEach(pid => {
+            const output = execSync(`cmd.exe /c "netstat -ano | findstr :${port}"`).toString();
+            const lines = output.split('\n').filter(line => line.trim());
+            
+            for (const line of lines) {
+              const columns = line.trim().split(/\s+/);
+              const pid = columns[columns.length - 1];
+              
+              if (pid && !isNaN(Number(pid)) && Number(pid) > 0) {
                 try {
-                  execSync(`taskkill /F /PID ${pid}`, { shell: true });
+                  execSync(`cmd.exe /c "taskkill /F /PID ${pid}"`);
                 } catch {}
-              });
+              }
+            }
           } catch {
             logger.warn(`Could not kill process on port ${port} in Git Bash/WSL environment`);
           }
@@ -117,15 +137,29 @@ export function killProcessOnPort(port: number) {
         
       case "cmd":
       default:
-        // Windows CMD
+        // Windows CMD - use pure Windows syntax without Unix commands
         try {
-          // Use cmd.exe explicitly to ensure proper execution
-          execSync(
-            `cmd.exe /c "FOR /F \\"tokens=5\\" %a in ('netstat -ano ^| findstr :${port}') do taskkill /F /PID %a"`,
-            { shell: false }
-          );
+          // First get the list of PIDs using the port
+          const output = execSync(`netstat -ano | findstr :${port}`, { encoding: 'utf8' });
+          const lines = output.split('\n').filter(line => line.trim());
+          
+          for (const line of lines) {
+            // Windows netstat output format: Proto Local Foreign State PID
+            const columns = line.trim().split(/\s+/);
+            const pid = columns[columns.length - 1];
+            
+            if (pid && !isNaN(Number(pid)) && Number(pid) > 0) {
+              try {
+                execSync(`taskkill /F /PID ${pid}`, { stdio: 'ignore' });
+                logger.debug(`Killed process ${pid} on port ${port}`);
+              } catch {
+                // Process might already be gone or we lack permissions
+              }
+            }
+          }
         } catch (error) {
-          logger.warn(`Could not kill process on port ${port} in CMD environment`);
+          // Port might already be free or no process found
+          logger.warn(`Could not find or kill process on port ${port} in CMD environment`);
         }
         break;
     }
