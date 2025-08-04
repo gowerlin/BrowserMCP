@@ -1,9 +1,11 @@
-import { createSocketMessageSender } from "@/lib/messaging/ws/sender";
 import { WebSocket } from "ws";
-
-import { mcpConfig } from "@/lib/config/mcp.config";
-import { MessagePayload, MessageType } from "@/lib/messaging/types";
-import { SocketMessageMap } from "@/lib/types/messages/ws";
+import { 
+  createSocketMessageSender,
+  mcpConfig,
+  MessagePayload,
+  MessageType,
+  SocketMessageMap
+} from "./types/internal-types";
 
 const noConnectionMessage = `No connection to browser extension. In order to proceed, you must first connect a tab by clicking the Browser MCP extension icon in the browser toolbar and clicking the 'Connect' button.`;
 

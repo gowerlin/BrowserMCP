@@ -1,0 +1,31 @@
+{
+  "comments": {
+    "description": "VS Code MCP settings for Windows users",
+    "location": "C:\\Users\\[YourUsername]\\AppData\\Roaming\\Code\\User\\mcp.json",
+    "location_insiders": "C:\\Users\\[YourUsername]\\AppData\\Roaming\\Code - Insiders\\User\\mcp.json"
+  },
+  "servers": {
+    "browsermcp-fixed": {
+      "id": "browsermcp-fixed",
+      "name": "BrowserMCP (Git Bash Fixed)",
+      "gallery": false,
+      "config": {
+        "type": "stdio",
+        "command": "node",
+        "args": ["C:/path/to/BrowserMCP/dist/index.js"]
+      },
+      "description": "Browser automation with Git Bash compatibility fixes"
+    },
+    "browsermcp-original": {
+      "id": "browsermcp",
+      "name": "BrowserMCP (Original)",
+      "gallery": true,
+      "config": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@browsermcp/mcp@latest"]
+      },
+      "description": "Original BrowserMCP - may have issues in Git Bash"
+    }
+  }
+}

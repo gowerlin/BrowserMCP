@@ -1,6 +1,6 @@
 import { zodToJsonSchema } from "zod-to-json-schema";
 
-import { GetConsoleLogsTool, ScreenshotTool } from "@/lib/types/mcp/tool";
+import { GetConsoleLogsTool, ScreenshotTool } from "../types/internal-types";
 
 import { Tool } from "./tool";
 
@@ -16,7 +16,7 @@ export const getConsoleLogs: Tool = {
       {},
     );
     const text: string = consoleLogs
-      .map((log: any) => JSON.stringify(log))
+      .map((log) => JSON.stringify(log))
       .join("\n");
     return {
       content: [{ type: "text", text }],
