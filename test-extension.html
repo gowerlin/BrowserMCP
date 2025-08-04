@@ -180,28 +180,46 @@
 
         // Helper function to send message to extension
         async function sendToExtension(action, params = {}) {
+            // Check if we're in an extension context
+            if (typeof chrome === 'undefined' || !chrome.runtime) {
+                return { 
+                    success: false, 
+                    error: '請在安裝 BrowserMCP 擴充功能後，從擴充功能開啟此頁面，或使用擴充功能注入的內容腳本' 
+                };
+            }
+            
             try {
-                // Send message directly to the extension
-                const response = await chrome.runtime.sendMessage(
-                    'YOUR_EXTENSION_ID', // Will be replaced with actual extension ID
-                    {
+                // For testing, we'll use postMessage to communicate with the extension
+                // The extension needs to inject a content script to handle this
+                return new Promise((resolve) => {
+                    const messageId = Math.random().toString(36).substring(7);
+                    
+                    // Listen for response
+                    const handleResponse = (event) => {
+                        if (event.data && event.data.type === 'browserMCP-response' && event.data.messageId === messageId) {
+                            window.removeEventListener('message', handleResponse);
+                            resolve(event.data.response);
+                        }
+                    };
+                    
+                    window.addEventListener('message', handleResponse);
+                    
+                    // Send message to content script
+                    window.postMessage({
+                        type: 'browserMCP-request',
+                        messageId: messageId,
                         action: action,
-                        ...params
-                    }
-                );
-                return response;
+                        params: params
+                    }, '*');
+                    
+                    // Timeout after 5 seconds
+                    setTimeout(() => {
+                        window.removeEventListener('message', handleResponse);
+                        resolve({ success: false, error: 'Request timeout - 擴充功能可能未連接' });
+                    }, 5000);
+                });
             } catch (error) {
-                console.error('Failed to communicate with extension:', error);
-                // Try without extension ID (if on same origin)
-                try {
-                    const response = await chrome.runtime.sendMessage({
-                        action: action,
-                        ...params
-                    });
-                    return response;
-                } catch (innerError) {
-                    return { success: false, error: innerError.message };
-                }
+                return { success: false, error: error.message };
             }
         }
 

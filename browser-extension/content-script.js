@@ -262,4 +262,79 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
+// Listen for messages from the web page (for testing)
+window.addEventListener('message', async (event) => {
+  // Only accept messages from the same origin
+  if (event.source !== window) return;
+  
+  // Check if this is a BrowserMCP request
+  if (event.data && event.data.type === 'browserMCP-request') {
+    const { messageId, action, params } = event.data;
+    
+    try {
+      // Forward the request to the background script
+      const response = await chrome.runtime.sendMessage({
+        action: action,
+        ...params
+      });
+      
+      // Send the response back to the web page
+      window.postMessage({
+        type: 'browserMCP-response',
+        messageId: messageId,
+        response: response
+      }, '*');
+    } catch (error) {
+      // Send error response back to the web page
+      window.postMessage({
+        type: 'browserMCP-response',
+        messageId: messageId,
+        response: {
+          success: false,
+          error: error.message
+        }
+      }, '*');
+    }
+  }
+});
+
+// Inject test helper for easier debugging
+if (window.location.href.includes('test-extension.html')) {
+  const script = document.createElement('script');
+  script.textContent = `
+    console.log('BrowserMCP Test Helper Injected');
+    window.browserMCP = {
+      async sendCommand(method, params = {}) {
+        return new Promise((resolve) => {
+          const messageId = Math.random().toString(36).substring(7);
+          
+          const handleResponse = (event) => {
+            if (event.data && event.data.type === 'browserMCP-response' && event.data.messageId === messageId) {
+              window.removeEventListener('message', handleResponse);
+              resolve(event.data.response);
+            }
+          };
+          
+          window.addEventListener('message', handleResponse);
+          
+          window.postMessage({
+            type: 'browserMCP-request',
+            messageId: messageId,
+            action: 'executeDevToolsCommand',
+            command: method,
+            params: params
+          }, '*');
+          
+          setTimeout(() => {
+            window.removeEventListener('message', handleResponse);
+            resolve({ success: false, error: 'Request timeout' });
+          }, 5000);
+        });
+      }
+    };
+  `;
+  document.documentElement.appendChild(script);
+  script.remove();
+}
+
 console.log('Browser MCP content script loaded');
