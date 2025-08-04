@@ -10,7 +10,15 @@
       "Bash(npm run build:*)",
       "Bash(ls:*)",
       "Bash(git add:*)",
-      "Bash(git merge:*)"
+      "Bash(git merge:*)",
+      "Bash(git tag:*)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" release create v0.2.0 --title \"🚀 Browser MCP v0.2.0 - Complete DevTools Integration\" --notes-file release-notes.md --latest)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" release create v0.2.0 --title \"🚀 Browser MCP v0.2.0 - Complete DevTools Integration\" --notes-file release-notes.md --latest --target release)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" auth refresh -h github.com -s workflow)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm test)",
+      "Bash(node:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }

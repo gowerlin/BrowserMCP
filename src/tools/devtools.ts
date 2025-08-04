@@ -122,7 +122,7 @@ export const getNetworkRequests: Tool = {
     const validatedParams = GetNetworkRequestsTool.shape.arguments.parse(params);
     const requests = await context.sendSocketMessage("browser_get_network_requests", validatedParams);
     
-    const formattedRequests = requests.map((req: any) => ({
+    const formattedRequests = (requests as any[]).map((req: any) => ({
       url: req.url,
       method: req.method,
       status: req.status,

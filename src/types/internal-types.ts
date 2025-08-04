@@ -28,6 +28,10 @@ export interface SocketMessageMap {
   browser_screenshot: {};
   browser_get_console_logs: {};
   
+  // 頁面資訊
+  getUrl: undefined;
+  getTitle: undefined;
+  
   // 元素互動
   browser_click: { selector: string; button?: string };
   browser_drag: { from: string; to: string };

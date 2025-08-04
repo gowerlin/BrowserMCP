@@ -15,8 +15,8 @@ export const getConsoleLogs: Tool = {
       "browser_get_console_logs",
       {},
     );
-    const text: string = consoleLogs
-      .map((log) => JSON.stringify(log))
+    const text: string = (consoleLogs as any[])
+      .map((log: any) => JSON.stringify(log))
       .join("\n");
     return {
       content: [{ type: "text", text }],
@@ -39,7 +39,7 @@ export const screenshot: Tool = {
       content: [
         {
           type: "image",
-          data: screenshot,
+          data: screenshot as string,
           mimeType: "image/png",
         },
       ],
