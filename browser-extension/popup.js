@@ -76,7 +76,7 @@ async function connect() {
     // 發送連接請求到 background script
     const response = await chrome.runtime.sendMessage({
       action: 'connect',
-      data: { tabId: currentTab.id }
+      tabId: currentTab.id
     });
 
     if (response.success) {

@@ -137,7 +137,13 @@ async function disconnect() {
  */
 async function attachDebugger(tabId) {
   return new Promise((resolve, reject) => {
-    chrome.debugger.attach({ tabId }, "1.3", () => {
+    // Validate tabId
+    if (!tabId || typeof tabId !== 'number') {
+      reject(new Error('Invalid tab ID'));
+      return;
+    }
+    
+    chrome.debugger.attach({ tabId: tabId }, "1.3", () => {
       if (chrome.runtime.lastError) {
         reject(new Error(chrome.runtime.lastError.message));
       } else {
