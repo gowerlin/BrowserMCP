@@ -710,7 +710,7 @@ export class PuppeteerFallback {
       ErrorCode.EXTENSION_ERROR,
       'Failed to take screenshot',
       'PuppeteerFallback',
-      90000 // 90 seconds timeout for screenshots
+      30000 // 30 seconds timeout for screenshots
     );
   }
 }

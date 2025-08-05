@@ -4,7 +4,7 @@
   
   "fallback": {
     "mode": "auto",
-    "extensionTimeout": 5000,
+    "extensionTimeout": 10000,
     "retryAttempts": 2,
     "enableLogging": true
   },
@@ -45,6 +45,6 @@
     "enablePerformanceMonitoring": true,
     "maxConsoleLogEntries": 1000,
     "maxNetworkRequestEntries": 1000,
-    "screenshotTimeout": 90000
+    "screenshotTimeout": 30000
   }
 }

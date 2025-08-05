@@ -33,13 +33,15 @@ export class Context {
     payload: MessagePayload<SocketMessageMap, T>,
     options: { timeoutMs?: number } = {},
   ) {
-    // Use screenshot-specific timeout for screenshot operations
+    // Use operation-specific timeouts
     let timeoutMs = options.timeoutMs;
     if (!timeoutMs) {
       if (type === 'browser_screenshot') {
         timeoutMs = configManager.getConfig().devtools.screenshotTimeout;
+      } else if (type === 'browser_navigate') {
+        timeoutMs = 30000; // 30 seconds for navigation
       } else {
-        timeoutMs = 30000; // Default 30 seconds for other operations
+        timeoutMs = 15000; // 15 seconds for other operations (faster feedback)
       }
     }
 
