@@ -54,6 +54,12 @@ start-test-server.*
 monitor-*.cjs
 cleanup-for-release.ps1
 
+# Test files for timeout fixes (temporary)
+test/timeout-fix.test.js
+test/error-message-test.js
+test/comprehensive-validation.js
+test/manual-timeout-test.js
+
 # Log files
 *.log
 
