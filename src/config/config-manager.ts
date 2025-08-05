@@ -62,7 +62,7 @@ export interface BrowserMCPConfig {
 export const DEFAULT_CONFIG: BrowserMCPConfig = {
   fallback: {
     mode: 'auto',
-    extensionTimeout: 5000,
+    extensionTimeout: 10000,
     retryAttempts: 2,
     enableLogging: true
   },
@@ -100,7 +100,7 @@ export const DEFAULT_CONFIG: BrowserMCPConfig = {
     enablePerformanceMonitoring: true,
     maxConsoleLogEntries: 1000,
     maxNetworkRequestEntries: 1000,
-    screenshotTimeout: 90000
+    screenshotTimeout: 30000
   }
 };
 

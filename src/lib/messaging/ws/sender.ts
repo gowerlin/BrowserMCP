@@ -31,7 +31,9 @@ export function createSocketMessageSender<TMap>(
         };
         
         const timeout = setTimeout(() => {
-          reject(new Error(`Message timeout after ${timeoutMs}ms`));
+          const timeoutType = type === 'browser_navigate' ? 'navigation' : 
+                            type === 'browser_screenshot' ? 'screenshot' : 'operation';
+          reject(new Error(`訊息超時 ${timeoutMs/1000}s: ${timeoutType} (${type})`));
         }, timeoutMs);
         
         const handleMessage = (data: any) => {

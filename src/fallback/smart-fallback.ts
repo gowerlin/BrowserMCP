@@ -200,9 +200,11 @@ export class SmartFallbackManager {
       const timeout = setTimeout(() => {
         this.messageHandlers.delete(messageId);
         this.messageTimeouts.delete(messageId);
+        const timeoutType = type === 'navigate' ? 'navigation' : 
+                          type === 'browser_screenshot' ? 'screenshot' : 'extension operation';
         resolve(createErrorResponse(errorHandler.handleError(
           ErrorCode.TIMEOUT,
-          `Extension message timeout: ${type}`,
+          `Extension ${timeoutType} timeout after ${this.options.extensionTimeout/1000}s: ${type}`,
           null,
           'SmartFallback'
         )));
@@ -271,11 +273,21 @@ export class SmartFallbackManager {
             return result;
           } else {
             lastError = result.error;
-            this.log(`Extension operation failed: ${result.error?.message}`, 'warn');
+            // Special handling for timeout errors - immediately fallback
+            if (result.error?.message?.includes('timeout')) {
+              this.log(`Extension operation timed out, immediately falling back to Puppeteer: ${result.error.message}`, 'warn');
+            } else {
+              this.log(`Extension operation failed: ${result.error?.message}`, 'warn');
+            }
           }
         } catch (error: any) {
           lastError = error;
-          this.log(`Extension operation error: ${error.message}`, 'warn');
+          // Special handling for timeout errors - immediately fallback  
+          if (error.message?.includes('timeout')) {
+            this.log(`Extension operation timed out, immediately falling back to Puppeteer: ${error.message}`, 'warn');
+          } else {
+            this.log(`Extension operation error: ${error.message}`, 'warn');
+          }
         }
       } else {
         this.log('Extension not available, will try Puppeteer', 'warn');
