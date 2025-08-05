@@ -486,11 +486,14 @@ export class SmartFallbackManager {
    * 取得頁面截圖
    */
   async takeScreenshot(options: {
-    format?: 'png' | 'jpeg';
+    format?: 'png' | 'jpeg' | 'auto';
     quality?: number;
     fullPage?: boolean;
     clip?: { x: number; y: number; width: number; height: number };
-  } = {}): Promise<ApiResponse<string>> {
+    maxHeight?: number;
+    enableSegmentation?: boolean;
+    smartCompression?: boolean;
+  } = {}): Promise<ApiResponse<string | string[]>> {
     return this.executeOperation(
       'takeScreenshot',
       () => this.sendExtensionMessage('browser_screenshot', {}),
