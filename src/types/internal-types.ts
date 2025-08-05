@@ -128,8 +128,15 @@ export const GetConsoleLogsTool = z.object({
 
 export const ScreenshotTool = z.object({
   name: z.literal("browser_screenshot"),
-  description: z.literal("Take a screenshot of the current page"),
-  arguments: z.object({}),
+  description: z.literal("Take an optimized screenshot with smart compression and segmentation"),
+  arguments: z.object({
+    format: z.enum(['png', 'jpeg', 'auto']).optional().describe("Image format (auto = smart selection)"),
+    quality: z.number().min(1).max(100).optional().describe("JPEG quality (1-100)"),
+    fullPage: z.boolean().optional().describe("Capture full page height"),
+    smartCompression: z.boolean().optional().describe("Enable intelligent compression"),
+    enableSegmentation: z.boolean().optional().describe("Enable automatic segmentation for long pages"),
+    maxHeight: z.number().optional().describe("Maximum segment height in pixels")
+  }),
 });
 
 export const SnapshotTool = z.object({

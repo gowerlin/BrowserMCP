@@ -643,14 +643,234 @@ export class PuppeteerFallback {
   }
 
   /**
-   * 取得頁面截圖
+   * 等待頁面準備就緒 - 優化的策略
+   */
+  private async waitForPageReady(): Promise<void> {
+    try {
+      // 等待 DOM 準備就緒
+      await this.page!.waitForSelector('body', { timeout: 5000 });
+      
+      // 等待網路活動平靜（Puppeteer 方式）
+      await this.page!.waitForTimeout(2000); // 簡化實作，等待基本載入時間
+      
+      // 等待圖片載入完成
+      await this.page!.evaluate(() => {
+        return Promise.all(
+          Array.from(document.images)
+            .filter(img => !img.complete)
+            .map(img => new Promise(resolve => {
+              img.onload = img.onerror = resolve;
+              setTimeout(resolve, 3000); // 3秒超時
+            }))
+        );
+      });
+      
+    } catch (error) {
+      // 降級策略：基本等待時間
+      await new Promise(resolve => setTimeout(resolve, 1500));
+    }
+  }
+
+  /**
+   * 優化截圖選項 - 智慧壓縮
+   */
+  private async optimizeScreenshotOptions(options: any): Promise<any> {
+    const pageInfo = await this.analyzePageContent();
+    
+    let format = options.format;
+    let quality = options.quality;
+
+    // 智慧格式選擇
+    if (format === 'auto' || options.smartCompression !== false) {
+      if (pageInfo.hasPhotos || pageInfo.hasGradients) {
+        format = 'jpeg';
+        quality = quality || 85; // 高品質 JPEG
+      } else if (pageInfo.hasTransparency || pageInfo.isSimple) {
+        format = 'png';
+      } else {
+        format = 'jpeg';
+        quality = quality || 80; // 標準品質
+      }
+    }
+
+    // 分段截圖判斷
+    const enableSegmentation = options.enableSegmentation || 
+      (options.fullPage && pageInfo.height > (options.maxHeight || 8000));
+
+    const screenshotOptions: any = {
+      type: format || 'png',
+      encoding: 'base64',
+      fullPage: options.fullPage || false
+    };
+
+    if (format === 'jpeg' && quality) {
+      screenshotOptions.quality = quality;
+    }
+
+    if (options.clip) {
+      screenshotOptions.clip = options.clip;
+    }
+
+    return {
+      ...options,
+      format,
+      quality,
+      enableSegmentation,
+      screenshotOptions,
+      pageInfo
+    };
+  }
+
+  /**
+   * 分析頁面內容特徵
+   */
+  private async analyzePageContent(): Promise<{
+    width: number;
+    height: number;
+    hasPhotos: boolean;
+    hasGradients: boolean;
+    hasTransparency: boolean;
+    isSimple: boolean;
+    complexity: number;
+  }> {
+    return await this.page!.evaluate(() => {
+      const body = document.body;
+      const html = document.documentElement;
+      
+      const width = Math.max(body.scrollWidth, html.scrollWidth, html.clientWidth);
+      const height = Math.max(body.scrollHeight, html.scrollHeight, html.clientHeight);
+      
+      // 檢測圖片
+      const images = document.querySelectorAll('img');
+      const hasPhotos = images.length > 0 && 
+        Array.from(images).some(img => 
+          img.src && !img.src.includes('svg') && !img.src.startsWith('data:image/svg')
+        );
+      
+      // 檢測漸層和複雜背景
+      const elements = document.querySelectorAll('*');
+      let hasGradients = false;
+      let complexElementCount = 0;
+      
+      Array.from(elements).forEach(el => {
+        const style = window.getComputedStyle(el);
+        if (style.background && 
+            (style.background.includes('gradient') || 
+             style.backgroundImage.includes('gradient'))) {
+          hasGradients = true;
+        }
+        
+        // 計算複雜度
+        if (style.boxShadow !== 'none' || 
+            style.borderRadius !== '0px' ||
+            style.transform !== 'none') {
+          complexElementCount++;
+        }
+      });
+      
+      const totalElements = elements.length;
+      const complexity = totalElements > 0 ? complexElementCount / totalElements : 0;
+      
+      return {
+        width,
+        height,
+        hasPhotos,
+        hasGradients,
+        hasTransparency: false, // 簡化實作，實際可以更精確檢測
+        isSimple: totalElements < 50 && !hasPhotos && !hasGradients,
+        complexity
+      };
+    });
+  }
+
+  /**
+   * 分段截圖實作
+   */
+  private async takeSegmentedScreenshot(options: any): Promise<string[]> {
+    const { pageInfo, maxHeight = 8000 } = options;
+    const segments: string[] = [];
+    
+    const viewport = this.page!.viewport();
+    const viewportHeight = viewport?.height || 720;
+    const totalHeight = pageInfo.height;
+    
+    // 計算分段數量
+    const segmentCount = Math.ceil(totalHeight / maxHeight);
+    const overlap = 50; // 重疊像素，避免內容截斷
+    
+    console.log(`🔄 執行分段截圖：${segmentCount} 段，總高度 ${totalHeight}px`);
+    
+    for (let i = 0; i < segmentCount; i++) {
+      const scrollY = i * (maxHeight - overlap);
+      const remainingHeight = totalHeight - scrollY;
+      const segmentHeight = Math.min(maxHeight, remainingHeight);
+      
+      // 滾動到指定位置
+      await this.page!.evaluate((y) => {
+        window.scrollTo(0, y);
+      }, scrollY);
+      
+      // 等待渲染
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // 截圖指定區域
+      const segmentOptions = {
+        ...options.screenshotOptions,
+        fullPage: false,
+        clip: {
+          x: 0,
+          y: 0,
+          width: viewport?.width || 1280,
+          height: Math.min(segmentHeight, viewportHeight)
+        }
+      };
+      
+      const segment = await this.page!.screenshot(segmentOptions);
+      segments.push(segment as string);
+      
+      console.log(`✅ 分段 ${i + 1}/${segmentCount} 完成`);
+    }
+    
+    // 重置滾動位置
+    await this.page!.evaluate(() => window.scrollTo(0, 0));
+    
+    return segments;
+  }
+
+  /**
+   * 後處理截圖結果
+   */
+  private postProcessScreenshot(screenshot: string, options: any): string {
+    // 記錄優化統計
+    const originalSize = screenshot.length;
+    const estimatedKB = Math.round(originalSize * 0.75 / 1024);
+    
+    console.log(`📊 截圖優化統計:`);
+    console.log(`   格式: ${options.format}`);
+    console.log(`   品質: ${options.quality || 'default'}`);
+    console.log(`   資料大小: ${originalSize} 字元`);
+    console.log(`   估計檔案大小: ${estimatedKB} KB`);
+    
+    if (options.pageInfo) {
+      console.log(`   頁面複雜度: ${(options.pageInfo.complexity * 100).toFixed(1)}%`);
+      console.log(`   頁面尺寸: ${options.pageInfo.width}x${options.pageInfo.height}`);
+    }
+    
+    return screenshot;
+  }
+
+  /**
+   * 取得頁面截圖 - 支援智慧壓縮和分段截圖
    */
   async takeScreenshot(options: {
-    format?: 'png' | 'jpeg';
+    format?: 'png' | 'jpeg' | 'auto';
     quality?: number;
     fullPage?: boolean;
     clip?: { x: number; y: number; width: number; height: number };
-  } = {}): Promise<ApiResponse<string>> {
+    maxHeight?: number;
+    enableSegmentation?: boolean;
+    smartCompression?: boolean;
+  } = {}): Promise<ApiResponse<string | string[]>> {
     if (!this.isReady()) {
       return createErrorResponse(errorHandler.handleError(
         ErrorCode.EXTENSION_ERROR,
@@ -662,55 +882,28 @@ export class PuppeteerFallback {
 
     return await errorHandler.wrapAsync(
       async () => {
-        // 等待頁面完全載入 - 更智能的等待策略
-        try {
-          // 首先等待DOM準備就緒
-          await this.page!.waitForSelector('body', { timeout: 10000 });
-          
-          // 然後等待一段時間讓資源載入，特別是圖片和CSS
-          await new Promise(resolve => setTimeout(resolve, 5000));
-          
-          // 嘗試等待頁面中的圖片載入完成
-          await this.page!.evaluate(() => {
-            return Promise.all(
-              Array.from(document.images)
-                .filter(img => !img.complete)
-                .map(img => new Promise(resolve => {
-                  img.onload = img.onerror = resolve;
-                  // 設置超時，避免永久等待
-                  setTimeout(resolve, 10000);
-                }))
-            );
-          });
-          
-        } catch (error) {
-          // 如果等待失敗，至少等待基本時間讓頁面渲染
-          console.warn('Page readiness check failed, using fallback timing');
-          await new Promise(resolve => setTimeout(resolve, 3000));
-        }
-        
-        const screenshotOptions: any = {
-          type: options.format || 'png',
-          encoding: 'base64',
-          fullPage: options.fullPage || false
-        };
+        // 等待頁面完全載入 - 優化的等待策略
+        await this.waitForPageReady();
 
-        if (options.format === 'jpeg' && options.quality) {
-          screenshotOptions.quality = options.quality;
+        // 智慧壓縮：根據頁面內容自動選擇最佳格式
+        const optimizedOptions = await this.optimizeScreenshotOptions(options);
+
+        // 檢查是否需要分段截圖
+        if (optimizedOptions.enableSegmentation && optimizedOptions.fullPage) {
+          return await this.takeSegmentedScreenshot(optimizedOptions);
         }
 
-        if (options.clip) {
-          screenshotOptions.clip = options.clip;
-        }
+        // 標準截圖
+        const screenshot = await this.page!.screenshot(optimizedOptions.screenshotOptions);
+        const result = screenshot as string;
 
-        const screenshot = await this.page!.screenshot(screenshotOptions);
-        
-        return screenshot as string;
+        // 後處理優化
+        return this.postProcessScreenshot(result, optimizedOptions);
       },
       ErrorCode.EXTENSION_ERROR,
       'Failed to take screenshot',
       'PuppeteerFallback',
-      30000 // 30 seconds timeout for screenshots
+      30000 // 30 seconds timeout for screenshots (optimized)
     );
   }
 }

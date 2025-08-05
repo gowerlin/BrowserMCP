@@ -27,20 +27,40 @@ export const getConsoleLogs: Tool = {
 export const screenshot: Tool = {
   schema: {
     name: ScreenshotTool.shape.name.value,
-    description: ScreenshotTool.shape.description.value,
+    description: "Take an optimized screenshot with smart compression and segmentation support",
     inputSchema: zodToJsonSchema(ScreenshotTool.shape.arguments),
   },
-  handle: async (context, _params) => {
+  handle: async (context, params: any = {}) => {
     const screenshot = await context.sendSocketMessage(
       "browser_screenshot",
-      {},
+      {
+        format: params.format || 'auto',
+        quality: params.quality,
+        fullPage: params.fullPage,
+        smartCompression: params.smartCompression !== false,
+        enableSegmentation: params.enableSegmentation,
+        maxHeight: params.maxHeight
+      },
     );
+    
+    // 處理分段截圖結果
+    if (Array.isArray(screenshot)) {
+      return {
+        content: screenshot.map((segment: string, index: number) => ({
+          type: "image",
+          data: segment,
+          mimeType: `image/${params.format || 'png'}`,
+          filename: `screenshot_segment_${index + 1}.${params.format || 'png'}`
+        })),
+      };
+    }
+    
     return {
       content: [
         {
           type: "image",
           data: screenshot as string,
-          mimeType: "image/png",
+          mimeType: `image/${params.format || 'png'}`,
         },
       ],
     };

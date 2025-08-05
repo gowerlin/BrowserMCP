@@ -54,6 +54,16 @@ export interface BrowserMCPConfig {
     maxNetworkRequestEntries: number;
     screenshotTimeout: number;
   };
+
+  // 截圖優化設定
+  screenshot: {
+    smartCompression: boolean;
+    defaultFormat: 'png' | 'jpeg' | 'auto';
+    jpegQuality: number;
+    maxHeight: number;
+    enableSegmentation: boolean;
+    enableAnalytics: boolean;
+  };
 }
 
 /**
@@ -101,6 +111,14 @@ export const DEFAULT_CONFIG: BrowserMCPConfig = {
     maxConsoleLogEntries: 1000,
     maxNetworkRequestEntries: 1000,
     screenshotTimeout: 30000
+  },
+  screenshot: {
+    smartCompression: true,
+    defaultFormat: 'auto',
+    jpegQuality: 85,
+    maxHeight: 8000,
+    enableSegmentation: true,
+    enableAnalytics: true
   }
 };
 
