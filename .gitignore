@@ -45,3 +45,23 @@ pr-comment.txt
 *.tmp
 *.temp
 .claude/settings.local.json
+
+# Test and development files
+test-*.cjs
+test-*.js
+test-*.html
+start-test-server.*
+monitor-*.cjs
+cleanup-for-release.ps1
+
+# Log files
+*.log
+
+# User-specific configuration
+claude-cli-mcp-config.json
+
+# Development reports
+CODE_REVIEW_REPORT.md
+CONFIG-CONFLICT-RESOLUTION.md
+CONFIGURATION-VALIDATION-REPORT.md
+RELEASE-CHECKLIST.md

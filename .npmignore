@@ -1,0 +1,57 @@
+# Source files
+src/
+tsconfig.json
+
+# Development and test files
+test/
+test-*.cjs
+test-*.js 
+test-*.html
+start-test-server.*
+monitor-*.cjs
+*.test.*
+
+# Configuration examples (not needed in npm package)
+examples/
+browsermcp.config.json
+claude-cli-mcp-config.json
+
+# Documentation (available on GitHub)
+docs/
+*.md
+!README.md
+!LICENSE
+
+# Browser extension (separate installation)
+browser-extension/
+
+# Development files
+.git/
+.github/
+.gitignore
+.npmignore
+.editorconfig
+.eslintrc*
+.prettierrc*
+
+# Build files
+*.ts
+!*.d.ts
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Claude Code settings
+.claude/

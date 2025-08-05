@@ -4,9 +4,9 @@
   "mcp": {
     "servers": {
       "browsermcp-auto": {
-        "command": "npx",
-        "args": ["@browsermcp/mcp", "--auto-fallback"],
-        "cwd": ".",
+        "command": "node",
+        "args": ["./dist/index.js", "--auto-fallback"],
+        "cwd": "${workspaceFolder}",
         "env": {
           "BROWSERMCP_FALLBACK_MODE": "auto",
           "BROWSERMCP_ENABLE_LOGGING": "true",
@@ -16,7 +16,7 @@
       "browsermcp-extension": {
         "command": "npx",
         "args": ["@browsermcp/mcp", "--extension-only"],
-        "cwd": ".",
+        "cwd": "${workspaceFolder}",
         "env": {
           "BROWSERMCP_FALLBACK_MODE": "extension",
           "BROWSERMCP_EXTENSION_TIMEOUT": "10000"
@@ -25,7 +25,7 @@
       "browsermcp-puppeteer": {
         "command": "npx",
         "args": ["@browsermcp/mcp", "--puppeteer-only", "--headless"],
-        "cwd": ".",
+        "cwd": "${workspaceFolder}",
         "env": {
           "BROWSERMCP_FALLBACK_MODE": "puppeteer",
           "BROWSERMCP_PUPPETEER_HEADLESS": "true"

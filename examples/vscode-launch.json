@@ -6,7 +6,7 @@
       "name": "除錯 BrowserMCP (自動模式)",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/node_modules/@browsermcp/mcp/dist/index.js",
+      "program": "${workspaceFolder}/dist/index.js",
       "args": ["--auto-fallback", "--verbose", "--show-config"],
       "env": {
         "BROWSERMCP_FALLBACK_MODE": "auto",
@@ -20,14 +20,14 @@
       ],
       "sourceMaps": true,
       "outFiles": [
-        "${workspaceFolder}/node_modules/@browsermcp/mcp/dist/**/*.js"
+        "${workspaceFolder}/dist/**/*.js"
       ]
     },
     {
       "name": "除錯 BrowserMCP (Extension 模式)",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/node_modules/@browsermcp/mcp/dist/index.js",
+      "program": "${workspaceFolder}/dist/index.js",
       "args": ["--extension-only", "--verbose"],
       "env": {
         "BROWSERMCP_FALLBACK_MODE": "extension",
@@ -41,7 +41,7 @@
       "name": "除錯 BrowserMCP (Puppeteer 模式)",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/node_modules/@browsermcp/mcp/dist/index.js",
+      "program": "${workspaceFolder}/dist/index.js",
       "args": ["--puppeteer-only", "--no-headless", "--verbose"],
       "env": {
         "BROWSERMCP_FALLBACK_MODE": "puppeteer",
@@ -55,7 +55,7 @@
       "name": "除錯 BrowserMCP (自訂配置)",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/node_modules/@browsermcp/mcp/dist/index.js",
+      "program": "${workspaceFolder}/dist/index.js",
       "args": ["--config", "${workspaceFolder}/browsermcp.config.json", "--verbose"],
       "env": {
         "NODE_ENV": "development"

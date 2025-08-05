@@ -1,0 +1,471 @@
+{
+  "extensionName": {
+    "message": "BrowserMCP DevTools 橋接器",
+    "description": "擴充功能名稱"
+  },
+  "extensionDescription": {
+    "message": "Chrome DevTools Protocol 橋接器，用於 BrowserMCP - AI 驅動的瀏覽器自動化",
+    "description": "擴充功能描述"
+  },
+  
+  "popupTitle": {
+    "message": "BrowserMCP DevTools 橋接器",
+    "description": "彈出視窗標題"
+  },
+  "connectionStatus": {
+    "message": "連線狀態",
+    "description": "連線狀態區塊標題"
+  },
+  "status": {
+    "message": "狀態：",
+    "description": "狀態標籤"
+  },
+  "statusConnected": {
+    "message": "已連線",
+    "description": "已連線狀態"
+  },
+  "statusDisconnected": {
+    "message": "未連線",
+    "description": "未連線狀態"
+  },
+  "websocketUrl": {
+    "message": "WebSocket 網址：",
+    "description": "WebSocket URL 標籤"
+  },
+  "currentTab": {
+    "message": "目前分頁：",
+    "description": "目前分頁標籤"
+  },
+  "tabId": {
+    "message": "分頁 ID：",
+    "description": "分頁 ID 標籤"
+  },
+  
+  "buttonConnect": {
+    "message": "連線",
+    "description": "連線按鈕文字"
+  },
+  "buttonDisconnect": {
+    "message": "斷線",
+    "description": "斷線按鈕文字"
+  },
+  "buttonSettings": {
+    "message": "設定",
+    "description": "設定按鈕文字"
+  },
+  
+  "connectionLog": {
+    "message": "連線記錄",
+    "description": "連線記錄區塊標題"
+  },
+  "clearLog": {
+    "message": "清除",
+    "description": "清除記錄按鈕文字"
+  },
+  
+  "errorNoActiveTab": {
+    "message": "找不到使用中的分頁",
+    "description": "沒有使用中分頁的錯誤"
+  },
+  "errorConnectionFailed": {
+    "message": "連線失敗：$ERROR$",
+    "description": "連線失敗錯誤",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "連線被拒絕"
+      }
+    }
+  },
+  "successConnected": {
+    "message": "連線成功！",
+    "description": "連線成功訊息"
+  },
+  "messageDisconnected": {
+    "message": "已與伺服器斷線",
+    "description": "斷線訊息"
+  },
+  
+  "optionsTitle": {
+    "message": "BrowserMCP 設定",
+    "description": "選項頁面標題"
+  },
+  "optionsConnectionSettings": {
+    "message": "連線設定",
+    "description": "連線設定區塊"
+  },
+  "optionsWebSocketUrl": {
+    "message": "WebSocket 伺服器網址",
+    "description": "WebSocket URL 選項標籤"
+  },
+  "optionsWebSocketUrlPlaceholder": {
+    "message": "ws://localhost:9002",
+    "description": "WebSocket URL 預設值"
+  },
+  "optionsConnectionTimeout": {
+    "message": "連線逾時 (毫秒)",
+    "description": "連線逾時選項"
+  },
+  "optionsReconnectDelay": {
+    "message": "重連延遲 (毫秒)",
+    "description": "重連延遲選項"
+  },
+  
+  "optionsAdvancedSettings": {
+    "message": "進階設定",
+    "description": "進階設定區塊"
+  },
+  "optionsAutoReconnect": {
+    "message": "自動重新連線",
+    "description": "自動重連選項"
+  },
+  "optionsEnableLogging": {
+    "message": "啟用除錯記錄",
+    "description": "啟用記錄選項"
+  },
+  "optionsMaxReconnectAttempts": {
+    "message": "最大重連次數",
+    "description": "最大重連次數選項"
+  },
+  
+  "optionsSaveButton": {
+    "message": "儲存設定",
+    "description": "儲存設定按鈕"
+  },
+  "optionsResetButton": {
+    "message": "重設為預設值",
+    "description": "重設按鈕"
+  },
+  "optionsSaveSuccess": {
+    "message": "設定已成功儲存！",
+    "description": "設定儲存訊息"
+  },
+  "optionsResetSuccess": {
+    "message": "設定已重設為預設值",
+    "description": "設定重設訊息"
+  },
+  
+  "footerSupport": {
+    "message": "支援",
+    "description": "支援連結文字"
+  },
+  "footerDocumentation": {
+    "message": "文檔",
+    "description": "文檔連結文字"
+  },
+  "footerGitHub": {
+    "message": "GitHub",
+    "description": "GitHub 連結文字"
+  },
+  
+  "statusConnecting": {
+    "message": "連線中...",
+    "description": "連線中狀態"
+  },
+  "featuresTitle": {
+    "message": "可用功能",
+    "description": "功能區塊標題"
+  },
+  
+  "optionsDescription": {
+    "message": "設定擴充功能連線和行為參數",
+    "description": "選項頁面描述"
+  },
+  "optionsWebSocketConnection": {
+    "message": "WebSocket 連接",
+    "description": "WebSocket 連接設定標題"
+  },
+  "optionsWebSocketConnectionDescription": {
+    "message": "配置與 BrowserMCP 伺服器的 WebSocket 連接參數",
+    "description": "WebSocket 連接設定描述"
+  },
+  "optionsServerUrl": {
+    "message": "伺服器 URL:",
+    "description": "伺服器 URL 標籤"
+  },
+  "optionsConnectionTimeoutLabel": {
+    "message": "連接超時",
+    "description": "連接超時設定標題"
+  },
+  "optionsConnectionTimeoutDescription": {
+    "message": "設定與伺服器建立連接時的最大等待時間（毫秒）",
+    "description": "連接超時設定描述"
+  },
+  "optionsMilliseconds": {
+    "message": "毫秒",
+    "description": "毫秒單位"
+  },
+  "optionsAutoReconnectLabel": {
+    "message": "自動重連",
+    "description": "自動重連設定標題"
+  },
+  "optionsAutoReconnectDescription": {
+    "message": "當與伺服器的連接中斷時，是否自動嘗試重新連接",
+    "description": "自動重連設定描述"
+  },
+  "optionsEnableAutoReconnect": {
+    "message": "啟用自動重連",
+    "description": "啟用自動重連選項"
+  },
+  "optionsReconnectInterval": {
+    "message": "重連間隔",
+    "description": "重連間隔設定標題"
+  },
+  "optionsReconnectIntervalDescription": {
+    "message": "自動重連的間隔時間（秒）",
+    "description": "重連間隔設定描述"
+  },
+  "optionsSeconds": {
+    "message": "秒",
+    "description": "秒單位"
+  },
+  "optionsDebugMode": {
+    "message": "除錯模式",
+    "description": "除錯模式設定標題"
+  },
+  "optionsDebugModeDescription": {
+    "message": "啟用詳細的控制台日誌記錄，用於問題診斷",
+    "description": "除錯模式設定描述"
+  },
+  "optionsEnableDebugLog": {
+    "message": "啟用除錯日誌",
+    "description": "啟用除錯日誌選項"
+  },
+  "optionsSaveSettings": {
+    "message": "儲存設定",
+    "description": "儲存設定按鈕"
+  },
+  "optionsResetToDefaults": {
+    "message": "重置為預設值",
+    "description": "重置為預設值連結"
+  },
+  
+  "errorLoadSettings": {
+    "message": "載入設定失敗：$ERROR$",
+    "description": "載入設定錯誤",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "存取被拒絕"
+      }
+    }
+  },
+  "errorWebSocketUrlEmpty": {
+    "message": "WebSocket URL 不能為空",
+    "description": "WebSocket URL 空白錯誤"
+  },
+  "errorWebSocketUrlInvalid": {
+    "message": "WebSocket URL 必須以 ws:// 或 wss:// 開頭",
+    "description": "WebSocket URL 格式錯誤"
+  },
+  "errorConnectionTimeoutRange": {
+    "message": "連接超時必須在 1000-30000 毫秒之間",
+    "description": "連接超時範圍錯誤"
+  },
+  "errorReconnectIntervalRange": {
+    "message": "重連間隔必須在 1-60 秒之間",
+    "description": "重連間隔範圍錯誤"
+  },
+  "successSettingsSaved": {
+    "message": "✅ 設定已成功儲存",
+    "description": "設定儲存成功訊息"
+  },
+  "errorSaveSettings": {
+    "message": "❌ $ERROR$",
+    "description": "儲存設定錯誤",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "儲存失敗"
+      }
+    }
+  },
+  "confirmReset": {
+    "message": "確定要將所有設定重置為預設值嗎？",
+    "description": "重置確認訊息"
+  },
+  "successSettingsReset": {
+    "message": "🔄 設定已重置為預設值",
+    "description": "設定重置成功訊息"
+  },
+  "errorResetSettings": {
+    "message": "❌ 重置設定失敗：$ERROR$",
+    "description": "重置設定錯誤",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "存取被拒絕"
+      }
+    }
+  },
+  "successSettingsExported": {
+    "message": "📄 設定已匯出",
+    "description": "設定匯出成功訊息"
+  },
+  "errorExportSettings": {
+    "message": "❌ 匯出設定失敗：$ERROR$",
+    "description": "匯出設定錯誤",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "檔案系統錯誤"
+      }
+    }
+  },
+  "errorImportFileFormat": {
+    "message": "匯入檔案格式不正確",
+    "description": "匯入檔案格式錯誤"
+  },
+  "successSettingsImported": {
+    "message": "📥 設定已成功匯入",
+    "description": "設定匯入成功訊息"
+  },
+  "errorImportSettings": {
+    "message": "❌ 匯入設定失敗：$ERROR$",
+    "description": "匯入設定錯誤",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "檔案讀取錯誤"
+      }
+    }
+  },
+  
+  "backgroundInitialized": {
+    "message": "Browser MCP 擴充功能已初始化",
+    "description": "擴充功能初始化訊息"
+  },
+  "errorNoCommandSpecified": {
+    "message": "未指定指令",
+    "description": "未指定指令錯誤"
+  },
+  "errorUnknownAction": {
+    "message": "未知的操作",
+    "description": "未知操作錯誤"
+  },
+  "commandSuccessful": {
+    "message": "指令執行成功",
+    "description": "指令成功訊息"
+  },
+  "commandFailed": {
+    "message": "指令執行失敗",
+    "description": "指令失敗訊息"
+  },
+  "websocketConnected": {
+    "message": "WebSocket 已連線",
+    "description": "WebSocket 連線成功訊息"
+  },
+  "websocketDisconnected": {
+    "message": "WebSocket 已斷線",
+    "description": "WebSocket 斷線訊息"
+  },
+  "websocketError": {
+    "message": "WebSocket 錯誤",
+    "description": "WebSocket 錯誤訊息"
+  },
+  "debuggerAttached": {
+    "message": "除錯器已附加",
+    "description": "除錯器附加成功訊息"
+  },
+  "devtoolsEnabled": {
+    "message": "DevTools 網域已啟用",
+    "description": "DevTools 啟用成功訊息"
+  },
+  "extensionConnected": {
+    "message": "擴充功能已成功連接到分頁",
+    "description": "擴充功能連接成功訊息"
+  },
+  "failedToConnect": {
+    "message": "連接失敗",
+    "description": "連接失敗訊息"
+  },
+  "failedToDisconnect": {
+    "message": "斷開連接失敗",
+    "description": "斷開連接失敗訊息"
+  },
+  "settingsUpdated": {
+    "message": "設定已更新",
+    "description": "設定更新訊息"
+  },
+  "reconnectingWebSocket": {
+    "message": "正在使用新網址重新連接 WebSocket",
+    "description": "WebSocket 重新連接訊息"
+  },
+  "websocketReconnectedSuccessfully": {
+    "message": "WebSocket 重新連接成功",
+    "description": "WebSocket 重新連接成功訊息"
+  },
+  "failedToReconnectWebSocket": {
+    "message": "WebSocket 重新連接失敗",
+    "description": "WebSocket 重新連接失敗訊息"
+  },
+  "debugModeEnabled": {
+    "message": "除錯模式已啟用 - 詳細日誌記錄已激活",
+    "description": "除錯模式啟用訊息"
+  },
+  "failedToApplySettings": {
+    "message": "套用設定失敗",
+    "description": "套用設定失敗訊息"
+  },
+  "executingDevToolsCommand": {
+    "message": "執行 DevTools 指令",
+    "description": "執行 DevTools 指令訊息"
+  },
+  "devtoolsCommandError": {
+    "message": "DevTools 指令錯誤",
+    "description": "DevTools 指令錯誤訊息"
+  },
+  "devtoolsCommandResult": {
+    "message": "DevTools 指令結果",
+    "description": "DevTools 指令結果訊息"
+  },
+  "failedToHandleWebSocketMessage": {
+    "message": "處理 WebSocket 訊息失敗",
+    "description": "處理 WebSocket 訊息失敗訊息"
+  },
+  "websocketConnectionFailed": {
+    "message": "WebSocket 連接失敗（伺服器可能未啟動）",
+    "description": "WebSocket 連接失敗訊息"
+  },
+  
+  "extensionContextInvalid": {
+    "message": "擴充功能需要重新載入。請到 chrome://extensions/ 重新載入 BrowserMCP 擴充功能，然後重新整理此頁面。",
+    "description": "擴充功能上下文失效錯誤"
+  },
+  "extensionContextLost": {
+    "message": "擴充功能上下文已失效。擴充功能需要重新載入。",
+    "description": "擴充功能上下文丟失訊息"
+  },
+  "cannotConnectToExtension": {
+    "message": "無法連接到擴充功能背景腳本。請確認擴充功能已啟用並重新載入。",
+    "description": "無法連接到擴充功能錯誤"
+  },
+  "extensionNeedsReload": {
+    "message": "請重新載入擴充功能和重新整理此頁面。",
+    "description": "擴充功能需要重新載入提示"
+  },
+  "connectedToBackground": {
+    "message": "已連接到 Browser MCP 背景腳本",
+    "description": "連接到背景腳本成功訊息"
+  },
+  "disconnectedFromBackground": {
+    "message": "已從背景腳本斷開連接",
+    "description": "從背景腳本斷開連接訊息"
+  },
+  "attemptingToReconnect": {
+    "message": "正在嘗試重新連接...",
+    "description": "嘗試重新連接訊息"
+  },
+  "failedToConnectToBackground": {
+    "message": "無法連接到背景腳本",
+    "description": "連接到背景腳本失敗訊息"
+  },
+  "browserMCPContentScriptLoaded": {
+    "message": "Browser MCP 內容腳本已載入",
+    "description": "內容腳本載入成功訊息"
+  },
+  "browserMCPTestHelperInjected": {
+    "message": "BrowserMCP 測試協助器已注入",
+    "description": "測試協助器注入成功訊息"
+  }
+}

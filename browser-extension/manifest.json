@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Browser MCP DevTools Integration",
+  "name": "__MSG_extensionName__",
   "version": "1.0.0",
-  "description": "Chrome extension for Browser MCP with complete DevTools integration",
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "en",
   
   "permissions": [
     "debugger",
@@ -42,6 +43,11 @@
       "run_at": "document_start"
     }
   ],
+  
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
   
   "icons": {
     "16": "icons/icon-16.png",

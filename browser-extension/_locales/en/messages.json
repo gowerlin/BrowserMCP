@@ -1,0 +1,471 @@
+{
+  "extensionName": {
+    "message": "BrowserMCP DevTools Bridge",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "Chrome DevTools Protocol bridge for BrowserMCP - AI-powered browser automation",
+    "description": "Extension description"
+  },
+  
+  "popupTitle": {
+    "message": "BrowserMCP DevTools Bridge",
+    "description": "Popup window title"
+  },
+  "connectionStatus": {
+    "message": "Connection Status",
+    "description": "Connection status section title"
+  },
+  "status": {
+    "message": "Status:",
+    "description": "Status label"
+  },
+  "statusConnected": {
+    "message": "Connected",
+    "description": "Connected status"
+  },
+  "statusDisconnected": {
+    "message": "Disconnected",
+    "description": "Disconnected status"
+  },
+  "websocketUrl": {
+    "message": "WebSocket URL:",
+    "description": "WebSocket URL label"
+  },
+  "currentTab": {
+    "message": "Current Tab:",
+    "description": "Current tab label"
+  },
+  "tabId": {
+    "message": "Tab ID:",
+    "description": "Tab ID label"
+  },
+  
+  "buttonConnect": {
+    "message": "Connect",
+    "description": "Connect button text"
+  },
+  "buttonDisconnect": {
+    "message": "Disconnect",
+    "description": "Disconnect button text"
+  },
+  "buttonSettings": {
+    "message": "Settings",
+    "description": "Settings button text"
+  },
+  
+  "connectionLog": {
+    "message": "Connection Log",
+    "description": "Connection log section title"
+  },
+  "clearLog": {
+    "message": "Clear",
+    "description": "Clear log button text"
+  },
+  
+  "errorNoActiveTab": {
+    "message": "No active tab found",
+    "description": "Error when no active tab"
+  },
+  "errorConnectionFailed": {
+    "message": "Failed to connect: $ERROR$",
+    "description": "Connection failed error",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "Connection refused"
+      }
+    }
+  },
+  "successConnected": {
+    "message": "Connected successfully!",
+    "description": "Connection success message"
+  },
+  "messageDisconnected": {
+    "message": "Disconnected from server",
+    "description": "Disconnection message"
+  },
+  
+  "optionsTitle": {
+    "message": "BrowserMCP Settings",
+    "description": "Options page title"
+  },
+  "optionsConnectionSettings": {
+    "message": "Connection Settings",
+    "description": "Connection settings section"
+  },
+  "optionsWebSocketUrl": {
+    "message": "WebSocket Server URL",
+    "description": "WebSocket URL option label"
+  },
+  "optionsWebSocketUrlPlaceholder": {
+    "message": "ws://localhost:9002",
+    "description": "WebSocket URL placeholder"
+  },
+  "optionsConnectionTimeout": {
+    "message": "Connection Timeout (ms)",
+    "description": "Connection timeout option"
+  },
+  "optionsReconnectDelay": {
+    "message": "Reconnect Delay (ms)",
+    "description": "Reconnect delay option"
+  },
+  
+  "optionsAdvancedSettings": {
+    "message": "Advanced Settings",
+    "description": "Advanced settings section"
+  },
+  "optionsAutoReconnect": {
+    "message": "Auto Reconnect",
+    "description": "Auto reconnect option"
+  },
+  "optionsEnableLogging": {
+    "message": "Enable Debug Logging",
+    "description": "Enable logging option"
+  },
+  "optionsMaxReconnectAttempts": {
+    "message": "Max Reconnect Attempts",
+    "description": "Max reconnect attempts option"
+  },
+  
+  "optionsSaveButton": {
+    "message": "Save Settings",
+    "description": "Save settings button"
+  },
+  "optionsResetButton": {
+    "message": "Reset to Defaults",
+    "description": "Reset button"
+  },
+  "optionsSaveSuccess": {
+    "message": "Settings saved successfully!",
+    "description": "Settings saved message"
+  },
+  "optionsResetSuccess": {
+    "message": "Settings reset to defaults",
+    "description": "Settings reset message"
+  },
+  
+  "footerSupport": {
+    "message": "Support",
+    "description": "Support link text"
+  },
+  "footerDocumentation": {
+    "message": "Documentation",
+    "description": "Documentation link text"
+  },
+  "footerGitHub": {
+    "message": "GitHub",
+    "description": "GitHub link text"
+  },
+  
+  "statusConnecting": {
+    "message": "Connecting...",
+    "description": "Connecting status"
+  },
+  "featuresTitle": {
+    "message": "Available Features",
+    "description": "Features section title"
+  },
+  
+  "optionsDescription": {
+    "message": "Configure extension connection and behavior parameters",
+    "description": "Options page description"
+  },
+  "optionsWebSocketConnection": {
+    "message": "WebSocket Connection",
+    "description": "WebSocket connection settings title"
+  },
+  "optionsWebSocketConnectionDescription": {
+    "message": "Configure WebSocket connection parameters to BrowserMCP server",
+    "description": "WebSocket connection settings description"
+  },
+  "optionsServerUrl": {
+    "message": "Server URL:",
+    "description": "Server URL label"
+  },
+  "optionsConnectionTimeoutLabel": {
+    "message": "Connection Timeout",
+    "description": "Connection timeout settings title"
+  },
+  "optionsConnectionTimeoutDescription": {
+    "message": "Maximum time to wait when establishing connection to server (milliseconds)",
+    "description": "Connection timeout settings description"
+  },
+  "optionsMilliseconds": {
+    "message": "milliseconds",
+    "description": "Milliseconds unit"
+  },
+  "optionsAutoReconnectLabel": {
+    "message": "Auto Reconnect",
+    "description": "Auto reconnect settings title"
+  },
+  "optionsAutoReconnectDescription": {
+    "message": "Automatically attempt to reconnect when connection to server is lost",
+    "description": "Auto reconnect settings description"
+  },
+  "optionsEnableAutoReconnect": {
+    "message": "Enable auto reconnect",
+    "description": "Enable auto reconnect option"
+  },
+  "optionsReconnectInterval": {
+    "message": "Reconnect Interval",
+    "description": "Reconnect interval settings title"
+  },
+  "optionsReconnectIntervalDescription": {
+    "message": "Time interval between auto reconnect attempts (seconds)",
+    "description": "Reconnect interval settings description"
+  },
+  "optionsSeconds": {
+    "message": "seconds",
+    "description": "Seconds unit"
+  },
+  "optionsDebugMode": {
+    "message": "Debug Mode",
+    "description": "Debug mode settings title"
+  },
+  "optionsDebugModeDescription": {
+    "message": "Enable verbose console logging for troubleshooting",
+    "description": "Debug mode settings description"
+  },
+  "optionsEnableDebugLog": {
+    "message": "Enable debug logging",
+    "description": "Enable debug logging option"
+  },
+  "optionsSaveSettings": {
+    "message": "Save Settings",
+    "description": "Save settings button"
+  },
+  "optionsResetToDefaults": {
+    "message": "Reset to Defaults",
+    "description": "Reset to defaults link"
+  },
+  
+  "errorLoadSettings": {
+    "message": "Failed to load settings: $ERROR$",
+    "description": "Load settings error",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "Access denied"
+      }
+    }
+  },
+  "errorWebSocketUrlEmpty": {
+    "message": "WebSocket URL cannot be empty",
+    "description": "WebSocket URL empty error"
+  },
+  "errorWebSocketUrlInvalid": {
+    "message": "WebSocket URL must start with ws:// or wss://",
+    "description": "WebSocket URL format error"
+  },
+  "errorConnectionTimeoutRange": {
+    "message": "Connection timeout must be between 1000-30000 milliseconds",
+    "description": "Connection timeout range error"
+  },
+  "errorReconnectIntervalRange": {
+    "message": "Reconnect interval must be between 1-60 seconds",
+    "description": "Reconnect interval range error"
+  },
+  "successSettingsSaved": {
+    "message": "✅ Settings saved successfully",
+    "description": "Settings saved success message"
+  },
+  "errorSaveSettings": {
+    "message": "❌ $ERROR$",
+    "description": "Save settings error",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "Save failed"
+      }
+    }
+  },
+  "confirmReset": {
+    "message": "Are you sure you want to reset all settings to defaults?",
+    "description": "Reset confirmation message"
+  },
+  "successSettingsReset": {
+    "message": "🔄 Settings reset to defaults",
+    "description": "Settings reset success message"
+  },
+  "errorResetSettings": {
+    "message": "❌ Failed to reset settings: $ERROR$",
+    "description": "Reset settings error",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "Access denied"
+      }
+    }
+  },
+  "successSettingsExported": {
+    "message": "📄 Settings exported",
+    "description": "Settings exported success message"
+  },
+  "errorExportSettings": {
+    "message": "❌ Failed to export settings: $ERROR$",
+    "description": "Export settings error",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "File system error"
+      }
+    }
+  },
+  "errorImportFileFormat": {
+    "message": "Import file format is incorrect",
+    "description": "Import file format error"
+  },
+  "successSettingsImported": {
+    "message": "📥 Settings imported successfully",
+    "description": "Settings imported success message"
+  },
+  "errorImportSettings": {
+    "message": "❌ Failed to import settings: $ERROR$",
+    "description": "Import settings error",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "File read error"
+      }
+    }
+  },
+  
+  "backgroundInitialized": {
+    "message": "Browser MCP Extension initialized",
+    "description": "Extension initialized message"
+  },
+  "errorNoCommandSpecified": {
+    "message": "No command specified",
+    "description": "No command specified error"
+  },
+  "errorUnknownAction": {
+    "message": "Unknown action",
+    "description": "Unknown action error"
+  },
+  "commandSuccessful": {
+    "message": "Command successful",
+    "description": "Command success message"
+  },
+  "commandFailed": {
+    "message": "Command failed",
+    "description": "Command failed message"
+  },
+  "websocketConnected": {
+    "message": "WebSocket connected",
+    "description": "WebSocket connected message"
+  },
+  "websocketDisconnected": {
+    "message": "WebSocket disconnected",
+    "description": "WebSocket disconnected message"
+  },
+  "websocketError": {
+    "message": "WebSocket error",
+    "description": "WebSocket error message"
+  },
+  "debuggerAttached": {
+    "message": "Debugger attached successfully",
+    "description": "Debugger attached message"
+  },
+  "devtoolsEnabled": {
+    "message": "DevTools domains enabled",
+    "description": "DevTools enabled message"
+  },
+  "extensionConnected": {
+    "message": "Extension connected successfully to tab",
+    "description": "Extension connected message"
+  },
+  "failedToConnect": {
+    "message": "Failed to connect",
+    "description": "Failed to connect message"
+  },
+  "failedToDisconnect": {
+    "message": "Failed to disconnect",
+    "description": "Failed to disconnect message"
+  },
+  "settingsUpdated": {
+    "message": "Settings updated",
+    "description": "Settings updated message"
+  },
+  "reconnectingWebSocket": {
+    "message": "Reconnecting WebSocket with new URL",
+    "description": "WebSocket reconnecting message"
+  },
+  "websocketReconnectedSuccessfully": {
+    "message": "WebSocket reconnected successfully",
+    "description": "WebSocket reconnected message"
+  },
+  "failedToReconnectWebSocket": {
+    "message": "Failed to reconnect WebSocket",
+    "description": "Failed to reconnect WebSocket message"
+  },
+  "debugModeEnabled": {
+    "message": "Debug mode enabled - verbose logging active",
+    "description": "Debug mode enabled message"
+  },
+  "failedToApplySettings": {
+    "message": "Failed to apply settings",
+    "description": "Failed to apply settings message"
+  },
+  "executingDevToolsCommand": {
+    "message": "Executing DevTools command",
+    "description": "Executing DevTools command message"
+  },
+  "devtoolsCommandError": {
+    "message": "DevTools command error",
+    "description": "DevTools command error message"
+  },
+  "devtoolsCommandResult": {
+    "message": "DevTools command result",
+    "description": "DevTools command result message"
+  },
+  "failedToHandleWebSocketMessage": {
+    "message": "Failed to handle WebSocket message",
+    "description": "Failed to handle WebSocket message"
+  },
+  "websocketConnectionFailed": {
+    "message": "WebSocket connection failed (server may not be running)",
+    "description": "WebSocket connection failed message"
+  },
+  
+  "extensionContextInvalid": {
+    "message": "Extension needs to be reloaded. Please go to chrome://extensions/ and reload BrowserMCP extension, then refresh this page.",
+    "description": "Extension context invalid error"
+  },
+  "extensionContextLost": {
+    "message": "Extension context lost. Extension needs to be reloaded.",
+    "description": "Extension context lost message"
+  },
+  "cannotConnectToExtension": {
+    "message": "Cannot connect to extension background script. Please ensure the extension is enabled and reload.",
+    "description": "Cannot connect to extension error"
+  },
+  "extensionNeedsReload": {
+    "message": "Please reload the extension and refresh this page.",
+    "description": "Extension needs reload prompt"
+  },
+  "connectedToBackground": {
+    "message": "Connected to Browser MCP background script",
+    "description": "Connected to background script success message"
+  },
+  "disconnectedFromBackground": {
+    "message": "Disconnected from background script",
+    "description": "Disconnected from background script message"
+  },
+  "attemptingToReconnect": {
+    "message": "Attempting to reconnect...",
+    "description": "Attempting to reconnect message"
+  },
+  "failedToConnectToBackground": {
+    "message": "Failed to connect to background script",
+    "description": "Failed to connect to background script message"
+  },
+  "browserMCPContentScriptLoaded": {
+    "message": "Browser MCP content script loaded",
+    "description": "Content script loaded success message"
+  },
+  "browserMCPTestHelperInjected": {
+    "message": "BrowserMCP Test Helper Injected",
+    "description": "Test helper injected success message"
+  }
+}

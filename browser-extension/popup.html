@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Browser MCP DevTools</title>
+  <title data-i18n="popupTitle">Browser MCP DevTools</title>
   <style>
     * {
       margin: 0;
@@ -210,23 +210,23 @@
     <div class="status-card">
       <div class="status-indicator">
         <div class="status-dot disconnected" id="statusDot"></div>
-        <span class="status-text" id="statusText">未連接</span>
+        <span class="status-text" id="statusText" data-i18n="statusDisconnected">Disconnected</span>
       </div>
       <div class="tab-info" id="tabInfo" style="display: none;">
-        <div id="tabTitle"></div>
-        <div id="tabUrl"></div>
+        <div><span data-i18n="currentTab">Current Tab:</span> <span id="tabTitle"></span></div>
+        <div><span data-i18n="tabId">Tab ID:</span> <span id="tabIdValue"></span></div>
       </div>
     </div>
 
-    <button class="connect-btn" id="connectBtn">連接當前標籤頁</button>
+    <button class="connect-btn" id="connectBtn" data-i18n="buttonConnect">Connect</button>
 
     <div class="loading" id="loading">
       <div class="spinner"></div>
-      <p style="margin-top: 10px;">連接中...</p>
+      <p style="margin-top: 10px;" data-i18n="statusConnecting">Connecting...</p>
     </div>
 
     <div class="features">
-      <h3>可用功能</h3>
+      <h3 data-i18n="featuresTitle">Available Features</h3>
       <div class="feature-list">
         <div class="feature-item" id="feature-network">🌐 Network</div>
         <div class="feature-item" id="feature-performance">⚡ Performance</div>
@@ -240,7 +240,7 @@
     </div>
 
     <div class="settings-link">
-      <a href="#" id="settingsLink">⚙️ 設定</a>
+      <a href="#" id="settingsLink">⚙️ <span data-i18n="buttonSettings">Settings</span></a>
     </div>
   </div>
 

@@ -15,7 +15,7 @@ Browser MCP v0.2.0 引入了完整的 DevTools 整合，並具備 Chrome Extensi
 
 ### 1. 安裝 MCP 伺服器
 
-#### 選項 A：從原始碼安裝（建議）
+#### 選項 A：從原始碼安裝（目前方法）
 
 ```bash
 # 複製儲存庫
@@ -31,13 +31,26 @@ npm run build
 # 驗證安裝
 npm run typecheck
 npm test
+
+# 可選：建立全域符號連結以便存取
+npm link
+# 現在可以全域使用 'browsermcp' 指令
 ```
 
-#### 選項 B：使用 npm（即將推出）
+#### 選項 B：本地開發建置
 
 ```bash
-# 正式發布後將可使用
-npm install -g @browsermcp/mcp
+# 如果您已經有原始碼
+cd D:\ForgejoGit\BrowserMCP
+
+# 清理並重新建置
+rm -rf dist/
+npm install
+npm run build
+
+# 驗證建置輸出
+ls -la dist/
+# 應該包含 index.js 和其他編譯檔案
 ```
 
 ### 2. 安裝 Chrome 擴充功能
@@ -100,7 +113,25 @@ npm install -g @browsermcp/mcp
 
 ### 4. AI 工具整合
 
-#### VS Code 搭配 Continue/Codeium
+⚠️ **重要**：請僅選擇一種整合方法以避免端口衝突！
+
+#### 選項 A：VS Code AI 工具（建議）
+
+```json
+// C:\Users\YourName\AppData\Roaming\Code\User\settings.json
+{
+  "ai.tools.browserMCP.enabled": true,
+  "ai.tools.browserMCP.description": "BrowserMCP 提供瀏覽器自動化功能，包括網頁導航、截圖、內容提取、JavaScript 執行等",
+  "ai.tools.browserMCP.path": "D:\\ForgejoGit\\BrowserMCP\\dist\\index.js",
+  "ai.tools.browserMCP.args": ["--auto-fallback", "--verbose"],
+  "ai.prompt.globalHints": [
+    "當需要瀏覽器自動化、網頁截圖、內容提取或 JavaScript 執行時，請使用 BrowserMCP 工具",
+    "BrowserMCP 支援智能備援模式，優先使用 Chrome Extension，必要時自動切換到 Puppeteer"
+  ]
+}
+```
+
+#### 選項 B：舊版 MCP 格式（VS Code 搭配 Continue/Codeium）
 
 ```json
 // .vscode/settings.json
@@ -108,26 +139,7 @@ npm install -g @browsermcp/mcp
   "mcpServers": {
     "browsermcp": {
       "command": "node",
-      "args": ["${workspaceFolder}/BrowserMCP/dist/index.js"],
-      "env": {
-        "BROWSERMCP_FALLBACK_MODE": "auto"
-      }
-    }
-  }
-}
-```
-
-#### Claude Desktop
-
-```json
-// Windows: %APPDATA%\Claude\claude_desktop_config.json
-// macOS: ~/Library/Application Support/Claude/claude_desktop_config.json
-// Linux: ~/.config/Claude/claude_desktop_config.json
-{
-  "mcpServers": {
-    "browsermcp": {
-      "command": "node",
-      "args": ["C:/path/to/BrowserMCP/dist/index.js"],
+      "args": ["${workspaceFolder}/BrowserMCP/dist/index.js", "--auto-fallback"],
       "env": {
         "BROWSERMCP_FALLBACK_MODE": "auto",
         "BROWSERMCP_ENABLE_LOGGING": "true"
@@ -137,16 +149,70 @@ npm install -g @browsermcp/mcp
 }
 ```
 
-#### Cursor IDE
+#### 選項 C：Claude Desktop（⚠️ 端口衝突風險）
+
+**⚠️ 警告**：如果使用 VS Code AI 工具，請保持 Claude Desktop 配置為空以避免端口 9002 衝突！
+
+```json
+// Windows: %APPDATA%\Claude\claude_desktop_config.json
+// macOS: ~/Library/Application Support/Claude/claude_desktop_config.json
+// Linux: ~/.config/Claude/claude_desktop_config.json
+
+// 選項 1：空配置（如果使用 VS Code 則建議）
+{
+  "globalShortcut": "",
+  "mcpServers": {}
+}
+
+// 選項 2：僅 Claude Desktop（先停用 VS Code AI 工具）
+{
+  "mcpServers": {
+    "browsermcp": {
+      "command": "node",
+      "args": ["D:\\ForgejoGit\\BrowserMCP\\dist\\index.js", "--auto-fallback"],
+      "env": {
+        "BROWSERMCP_FALLBACK_MODE": "auto",
+        "BROWSERMCP_ENABLE_LOGGING": "true"
+      }
+    }
+  }
+}
+```
+
+#### 選項 D：Cursor IDE
 
 ```json
 // .cursor/mcp.json
 {
   "servers": {
     "browsermcp": {
-      "command": "mcp-server-browsermcp",
-      "args": ["--auto-fallback"],
-      "description": "搭配 DevTools 的瀏覽器自動化"
+      "command": "node",
+      "args": ["D:\\ForgejoGit\\BrowserMCP\\dist\\index.js", "--auto-fallback"],
+      "description": "搭配 DevTools 的瀏覽器自動化",
+      "env": {
+        "BROWSERMCP_FALLBACK_MODE": "auto"
+      }
+    }
+  }
+}
+```
+
+#### 選項 E：Claude Code CLI（WSL/Linux）
+
+```json
+// ~/.claude/settings.json 或 project/.claude-code/config.json
+{
+  "mcp": {
+    "servers": {
+      "browsermcp": {
+        "command": "node",
+        "args": ["/mnt/d/ForgejoGit/BrowserMCP/dist/index.js", "--auto-fallback"],
+        "cwd": ".",
+        "env": {
+          "BROWSERMCP_FALLBACK_MODE": "auto",
+          "BROWSERMCP_ENABLE_LOGGING": "true"
+        }
+      }
     }
   }
 }
@@ -190,13 +256,32 @@ export BROWSERMCP_ENABLE_LOGGING=true
 
 ## 🧪 測試安裝
 
-### 1. 基本連接測試
+### 1. 檢查配置衝突
+
+```bash
+# 檢查端口 9002 是否已被佔用
+netstat -an | findstr 9002
+# 應該只顯示一個監聽進程
+
+# 檢查運行中的 Node.js 進程
+tasklist | findstr node
+# 應該顯示預期數量的進程
+```
+
+### 2. 基本連接測試
 
 ```bash
 # 啟動伺服器並記錄
+node dist/index.js --auto-fallback --verbose
+
+# 或使用 npm 腳本
 npm start
 
-# 在另一個終端機中，檢查健康狀態
+# 檢查配置
+node dist/index.js --show-config
+```
+
+### 3. 在另一個終端機中，檢查健康狀態
 mcp-server-browsermcp --show-config
 ```
 
@@ -274,19 +359,30 @@ await browser_set_mode({ mode: "puppeteer" });
 
 ### 常見問題
 
-#### Extension 連接問題
+#### 端口衝突問題（最常見）
 ```bash
-# 檢查埠是否被使用
-netstat -an | grep 9002
+# 檢查是否有多個 MCP 伺服器在運行
+netstat -an | findstr 9002
+# 應該只顯示一個監聽進程
 
-# 終止埠上的程序（如需要）
-# Windows
-netstat -ano | findstr :9002
-taskkill /PID <PID> /F
+# Windows：終止端口 9002 上的衝突進程
+for /f "tokens=5" %a in ('netstat -aon ^| findstr :9002') do taskkill /F /PID %a
 
-# Linux/macOS
+# Linux/macOS：終止端口 9002 上的進程
 lsof -i :9002
 kill -9 <PID>
+
+# 解決方案：只選擇一種整合方法：
+# - VS Code AI 工具 或 Claude Desktop（不要同時使用！）
+```
+
+#### Extension 連接問題
+```bash
+# 驗證擴充功能已安裝並連接
+# 1. 前往 chrome://extensions/
+# 2. 找到「Browser MCP DevTools Integration」
+# 3. 確保已啟用
+# 4. 點擊擴充功能圖示並連接到當前分頁
 ```
 
 #### Puppeteer 啟動問題
@@ -416,4 +512,34 @@ DEBUG=browsermcp:* npm start
 
 ---
 
-*最後更新：2025-08-05，適用於 Browser MCP v0.2.0*
+## 🔧 配置衝突預防
+
+### 快速衝突檢查
+
+執行此指令檢查配置衝突：
+
+```bash
+# 檢查端口使用
+netstat -an | findstr 9002
+
+# 檢查 VS Code 配置
+type "%APPDATA%\Code\User\settings.json" | findstr browserMCP
+
+# 檢查 Claude Desktop 配置  
+type "%APPDATA%\Claude\claude_desktop_config.json" | findstr browsermcp
+```
+
+### 解決指南
+
+如果發現多個配置：
+
+1. **選擇主要主機**：決定是否使用 VS Code 或 Claude Desktop
+2. **清除次要配置**：清空未使用的配置
+3. **驗證單一實例**：確保只有一個 BrowserMCP 伺服器運行
+4. **測試連接**：驗證擴充功能可以正常連接
+
+詳細衝突解決方案，請參閱：[CONFIG-CONFLICT-RESOLUTION.md](./CONFIG-CONFLICT-RESOLUTION.md)
+
+---
+
+*最後更新：2025-08-05，適用於 Browser MCP v0.2.0 含配置衝突預防功能*

@@ -1,10 +1,15 @@
 {
   "//": "VS Code settings.json 範例 - 複製需要的部分到你的 VS Code 設定中",
   
+  "ai.tools.browserMCP.enabled": true,
+  "ai.tools.browserMCP.path": "${workspaceFolder}/dist/index.js",
+  "ai.tools.browserMCP.args": ["--auto-fallback", "--verbose"],
+  
+  "//": "或者使用以下 MCP 格式（舊版配置方式）",
   "mcp.servers": {
     "browsermcp-auto": {
-      "command": "npx",
-      "args": ["@browsermcp/mcp", "--auto-fallback", "--verbose"],
+      "command": "node",
+      "args": ["${workspaceFolder}/dist/index.js", "--auto-fallback", "--verbose"],
       "env": {
         "BROWSERMCP_FALLBACK_MODE": "auto",
         "BROWSERMCP_ENABLE_LOGGING": "true",
@@ -56,7 +61,7 @@
   "terminal.integrated.defaultProfile.windows": "Git Bash",
   "terminal.integrated.profiles.windows": {
     "Git Bash": {
-      "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+      "path": "git-bash.exe",
       "args": ["-l"],
       "env": {
         "BROWSERMCP_FALLBACK_MODE": "auto"

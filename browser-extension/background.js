@@ -18,7 +18,7 @@ const consoleLogs = [];
  * Initialize the extension
  */
 function initialize() {
-  console.log('Browser MCP Extension initialized');
+  console.log(chrome.i18n.getMessage('backgroundInitialized') || 'Browser MCP Extension initialized');
   
   // Listen for messages from popup
   chrome.runtime.onMessage.addListener(handleMessage);
@@ -59,7 +59,7 @@ function handleMessage(request, sender, sendResponse) {
       const params = request.params || {};
       
       if (!command) {
-        sendResponse({ success: false, error: 'No command specified' });
+        sendResponse({ success: false, error: chrome.i18n.getMessage('errorNoCommandSpecified') || 'No command specified' });
         break;
       }
       
@@ -74,8 +74,56 @@ function handleMessage(request, sender, sendResponse) {
         });
       return true;
       
+    case 'settingsUpdated':
+      handleSettingsUpdate(request.settings).then(sendResponse);
+      return true;
+      
     default:
-      sendResponse({ success: false, error: 'Unknown action' });
+      sendResponse({ success: false, error: chrome.i18n.getMessage('errorUnknownAction') || 'Unknown action' });
+  }
+}
+
+/**
+ * Handle settings update from options page
+ */
+async function handleSettingsUpdate(settings) {
+  console.log('Settings updated:', settings);
+  
+  try {
+    // Update WebSocket URL if it changed
+    if (settings.wsUrl && settings.wsUrl !== WS_URL) {
+      const oldUrl = WS_URL;
+      WS_URL = settings.wsUrl;
+      console.log(`WebSocket URL updated: ${oldUrl} → ${WS_URL}`);
+      
+      // Reconnect WebSocket if currently connected
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        console.log('Reconnecting WebSocket with new URL');
+        ws.close();
+        
+        // Wait a moment then reconnect
+        setTimeout(async () => {
+          try {
+            if (currentTabId) {
+              await setupWebSocket();
+              console.log('WebSocket reconnected successfully');
+            }
+          } catch (error) {
+            console.error('Failed to reconnect WebSocket:', error);
+          }
+        }, 1000);
+      }
+    }
+    
+    // Apply other settings
+    if (settings.debugMode) {
+      console.log('Debug mode enabled - verbose logging active');
+    }
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to apply settings:', error);
+    throw error;
   }
 }
 
@@ -296,7 +344,10 @@ async function enableDevToolsDomains() {
       console.log(`Enabled optional ${domain} domain`);
     } catch (error) {
       // These are optional, so we just log and continue
-      console.log(`Optional domain ${domain} not available`);
+      // Don't log if it's a "not found" error as these are expected
+      if (!error.message.includes("wasn't found")) {
+        console.log(`Optional domain ${domain} error:`, error.message);
+      }
     }
   }
 }
@@ -314,8 +365,12 @@ function executeDevToolsCommand(method, params = {}) {
     // Ensure params is an object (not null or undefined)
     const commandParams = params || {};
     
-    // Debug log
-    console.log('Executing DevTools command:', method, 'with params:', commandParams);
+    // Debug log (only if not too large)
+    if (commandParams && JSON.stringify(commandParams).length > 500) {
+      console.log('Executing DevTools command:', method, 'with params: [Large object]');
+    } else {
+      console.log('Executing DevTools command:', method, 'with params:', commandParams);
+    }
     
     chrome.debugger.sendCommand(
       { tabId: currentTabId },
@@ -323,10 +378,24 @@ function executeDevToolsCommand(method, params = {}) {
       commandParams,
       (result) => {
         if (chrome.runtime.lastError) {
-          console.error('DevTools command error:', chrome.runtime.lastError);
-          reject(new Error(chrome.runtime.lastError.message));
+          const errorMessage = chrome.runtime.lastError.message || 'Unknown error';
+          
+          // Don't log errors for optional domains that are expected to fail
+          const isOptionalDomainError = errorMessage.includes("wasn't found") && 
+            (method.includes('Security.') || method.includes('ServiceWorker.') || method.includes('Storage.'));
+          
+          if (!isOptionalDomainError) {
+            console.error('DevTools command error:', errorMessage, 'for command:', method);
+          }
+          
+          reject(new Error(errorMessage));
         } else {
-          console.log('DevTools command result:', result);
+          // Only log result if not too large
+          if (result && JSON.stringify(result).length > 1000) {
+            console.log('DevTools command result: [Large object]');
+          } else {
+            console.log('DevTools command result:', result);
+          }
           resolve(result || {});
         }
       }

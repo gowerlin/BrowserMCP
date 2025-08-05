@@ -10,8 +10,12 @@ let isExtensionValid = true;
 function connectToBackground() {
   // Check if extension context is still valid
   if (!chrome.runtime?.id) {
-    console.warn('Extension context is invalid. The extension may need to be reloaded.');
+    console.warn(chrome.i18n?.getMessage('extensionContextInvalid') || 
+      'Extension context is invalid. The extension may need to be reloaded.');
     isExtensionValid = false;
+    
+    // Show user-friendly notification if possible
+    showExtensionInvalidNotification();
     return;
   }
   
@@ -283,10 +287,98 @@ connectToBackground();
 
 // Listen for page visibility changes
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && !port) {
+  if (!document.hidden && !port && chrome.runtime?.id) {
     connectToBackground();
   }
 });
+
+// Check if extension context is still valid periodically
+setInterval(() => {
+  if (!chrome.runtime?.id) {
+    console.warn(chrome.i18n?.getMessage('extensionContextLost') || 
+      'Extension context lost. Extension needs to be reloaded.');
+    isExtensionValid = false;
+    if (port) {
+      port.disconnect();
+      port = null;
+    }
+    showExtensionInvalidNotification();
+  }
+}, 5000);
+
+// Show notification about extension needing reload
+function showExtensionInvalidNotification() {
+  // Check if we already showed the notification
+  if (document.getElementById('browsermcp-reload-notification')) {
+    return;
+  }
+  
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.id = 'browsermcp-reload-notification';
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #f44336;
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    z-index: 999999;
+    max-width: 400px;
+    animation: slideIn 0.3s ease-out;
+  `;
+  
+  // Add animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  notification.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="flex: 1;">
+        <div style="font-weight: 600; margin-bottom: 4px;">BrowserMCP 需要重新載入</div>
+        <div style="opacity: 0.9;">請前往 chrome://extensions/ 重新載入擴充功能</div>
+      </div>
+      <button onclick="this.parentElement.parentElement.remove()" style="
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+      " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">×</button>
+    </div>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Auto-remove after 30 seconds
+  setTimeout(() => {
+    notification.remove();
+  }, 30000);
+}
 
 // Listen for messages from the web page (for testing)
 window.addEventListener('message', async (event) => {

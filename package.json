@@ -1,10 +1,10 @@
 {
   "name": "@browsermcp/mcp",
   "version": "0.2.0",
-  "description": "MCP server for browser automation using Browser MCP",
+  "description": "MCP server for browser automation with Chrome DevTools Protocol integration and smart fallback system",
   "author": "Browser MCP",
-  "homepage": "https://browsermcp.io",
-  "bugs": "https://github.com/browsermcp/mcp/issues",
+  "homepage": "https://github.com/gowerlin/BrowserMCP",
+  "bugs": "https://github.com/gowerlin/BrowserMCP/issues",
   "type": "module",
   "bin": {
     "mcp-server-browsermcp": "dist/index.js"

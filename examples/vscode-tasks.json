@@ -5,8 +5,8 @@
     {
       "label": "BrowserMCP: 啟動 (自動模式)",
       "type": "shell",
-      "command": "npx",
-      "args": ["@browsermcp/mcp", "--auto-fallback", "--verbose"],
+      "command": "node",
+      "args": ["${workspaceFolder}/dist/index.js", "--auto-fallback", "--verbose"],
       "group": "build",
       "presentation": {
         "echo": true,
@@ -25,8 +25,8 @@
     {
       "label": "BrowserMCP: 啟動 (Extension 模式)",
       "type": "shell",
-      "command": "npx",
-      "args": ["@browsermcp/mcp", "--extension-only", "--verbose"],
+      "command": "node",
+      "args": ["${workspaceFolder}/dist/index.js", "--extension-only", "--verbose"],
       "group": "build",
       "presentation": {
         "echo": true,
@@ -39,8 +39,8 @@
     {
       "label": "BrowserMCP: 啟動 (Puppeteer 模式)",
       "type": "shell",
-      "command": "npx",
-      "args": ["@browsermcp/mcp", "--puppeteer-only", "--headless", "--verbose"],
+      "command": "node",
+      "args": ["${workspaceFolder}/dist/index.js", "--puppeteer-only", "--headless", "--verbose"],
       "group": "build",
       "presentation": {
         "echo": true,
@@ -53,8 +53,8 @@
     {
       "label": "BrowserMCP: 顯示配置",
       "type": "shell",
-      "command": "npx",
-      "args": ["@browsermcp/mcp", "--show-config"],
+      "command": "node",
+      "args": ["${workspaceFolder}/dist/index.js", "--show-config"],
       "group": "test",
       "presentation": {
         "echo": true,
@@ -67,8 +67,8 @@
     {
       "label": "BrowserMCP: 產生配置檔案",
       "type": "shell",
-      "command": "npx",
-      "args": ["@browsermcp/mcp", "--generate-config"],
+      "command": "node",
+      "args": ["${workspaceFolder}/dist/index.js", "--generate-config"],
       "group": "build",
       "options": {
         "shell": {
@@ -86,8 +86,8 @@
     {
       "label": "BrowserMCP: 驗證配置",
       "type": "shell",
-      "command": "npx",
-      "args": ["@browsermcp/mcp", "config", "--validate"],
+      "command": "node",
+      "args": ["${workspaceFolder}/dist/index.js", "config", "--validate"],
       "group": "test",
       "presentation": {
         "echo": true,
@@ -99,8 +99,8 @@
     {
       "label": "BrowserMCP: 健康檢查",
       "type": "shell",
-      "command": "npx",
-      "args": ["@browsermcp/mcp", "config", "--show"],
+      "command": "node",
+      "args": ["${workspaceFolder}/dist/index.js", "config", "--show"],
       "group": "test",
       "presentation": {
         "echo": true,

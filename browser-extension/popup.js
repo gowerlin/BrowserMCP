@@ -3,6 +3,29 @@
  * 處理擴充功能 popup 的使用者介面邏輯
  */
 
+// i18n 初始化
+function initializeI18n() {
+  // 取得所有有 data-i18n 屬性的元素
+  const elements = document.querySelectorAll('[data-i18n]');
+  elements.forEach(element => {
+    const messageKey = element.getAttribute('data-i18n');
+    const message = chrome.i18n.getMessage(messageKey);
+    if (message) {
+      element.textContent = message;
+    }
+  });
+  
+  // 設定 HTML title
+  const titleElement = document.querySelector('title[data-i18n]');
+  if (titleElement) {
+    const messageKey = titleElement.getAttribute('data-i18n');
+    const message = chrome.i18n.getMessage(messageKey);
+    if (message) {
+      document.title = message;
+    }
+  }
+}
+
 // DOM 元素
 const statusDot = document.getElementById('statusDot');
 const statusText = document.getElementById('statusText');
@@ -33,6 +56,8 @@ let currentTab = null;
  * 初始化 popup
  */
 async function initialize() {
+  // 初始化 i18n
+  initializeI18n();
   // 獲取當前標籤頁
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   currentTab = tab;
@@ -86,7 +111,7 @@ async function connect() {
     }
   } catch (error) {
     console.error('Failed to connect:', error);
-    showError('連接失敗：' + error.message);
+    showError(chrome.i18n.getMessage('errorConnectionFailed', [error.message]));
   } finally {
     showLoading(false);
     connectBtn.disabled = false;
@@ -126,15 +151,15 @@ function setConnectedState(tab) {
   // 更新狀態指示器
   statusDot.classList.remove('disconnected');
   statusDot.classList.add('connected');
-  statusText.textContent = '已連接';
+  statusText.textContent = chrome.i18n.getMessage('statusConnected');
   
   // 顯示標籤頁資訊
   tabInfo.style.display = 'block';
-  tabTitle.textContent = `📄 ${tab.title || 'Untitled'}`;
-  tabUrl.textContent = `🔗 ${new URL(tab.url).hostname}`;
+  tabTitle.textContent = tab.title || 'Untitled';
+  document.getElementById('tabIdValue').textContent = tab.id;
   
   // 更新連接按鈕
-  connectBtn.textContent = '斷開連接';
+  connectBtn.textContent = chrome.i18n.getMessage('buttonDisconnect');
   connectBtn.classList.add('disconnect');
   
   // 啟用所有功能指示器
@@ -152,13 +177,13 @@ function setDisconnectedState() {
   // 更新狀態指示器
   statusDot.classList.remove('connected');
   statusDot.classList.add('disconnected');
-  statusText.textContent = '未連接';
+  statusText.textContent = chrome.i18n.getMessage('statusDisconnected');
   
   // 隱藏標籤頁資訊
   tabInfo.style.display = 'none';
   
   // 更新連接按鈕
-  connectBtn.textContent = '連接當前標籤頁';
+  connectBtn.textContent = chrome.i18n.getMessage('buttonConnect');
   connectBtn.classList.remove('disconnect');
   
   // 停用所有功能指示器

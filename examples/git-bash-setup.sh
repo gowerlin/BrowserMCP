@@ -26,8 +26,8 @@ export BROWSERMCP_FALLBACK_MODE=auto
 export BROWSERMCP_ENABLE_LOGGING=true
 export BROWSERMCP_WS_URL=ws://localhost:9002
 
-# 確保 Node.js 在 PATH 中
-export PATH=\"/c/Program Files/nodejs:\$PATH\"
+# 確保 Node.js 在 PATH 中 (根據你的安裝路徑調整)
+# export PATH=\"/c/Program Files/nodejs:\$PATH\"
 
 # BrowserMCP 輔助函數
 browsermcp_start() {
@@ -173,8 +173,9 @@ echo "✅ 包裝腳本已建立: ~/bin/browsermcp.sh"
 # 建立 .npmrc 修復 Windows 路徑問題
 cat > ~/.npmrc << EOF
 # 修復 Git Bash 中的 Windows 路徑問題
-cache=C:\\\\Users\\\\%USERNAME%\\\\AppData\\\\Roaming\\\\npm-cache
-prefix=C:\\\\Users\\\\%USERNAME%\\\\AppData\\\\Roaming\\\\npm
+# 使用環境變數自動偵測用戶路徑
+cache=\${APPDATA}/npm-cache
+prefix=\${APPDATA}/npm
 EOF
 
 echo "✅ npm 配置已建立: ~/.npmrc"
