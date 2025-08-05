@@ -52,6 +52,7 @@ export interface BrowserMCPConfig {
     enablePerformanceMonitoring: boolean;
     maxConsoleLogEntries: number;
     maxNetworkRequestEntries: number;
+    screenshotTimeout: number;
   };
 }
 
@@ -98,7 +99,8 @@ export const DEFAULT_CONFIG: BrowserMCPConfig = {
     enableNetworkMonitoring: true,
     enablePerformanceMonitoring: true,
     maxConsoleLogEntries: 1000,
-    maxNetworkRequestEntries: 1000
+    maxNetworkRequestEntries: 1000,
+    screenshotTimeout: 90000
   }
 };
 

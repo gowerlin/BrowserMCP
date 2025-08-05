@@ -149,6 +149,13 @@
           "minimum": 100,
           "maximum": 10000,
           "default": 1000
+        },
+        "screenshotTimeout": {
+          "description": "截圖操作超時時間 (毫秒)",
+          "type": "number",
+          "minimum": 10000,
+          "maximum": 300000,
+          "default": 90000
         }
       },
       "additionalProperties": false

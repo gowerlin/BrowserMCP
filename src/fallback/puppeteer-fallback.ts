@@ -641,4 +641,76 @@ export class PuppeteerFallback {
       'PuppeteerFallback'
     );
   }
+
+  /**
+   * 取得頁面截圖
+   */
+  async takeScreenshot(options: {
+    format?: 'png' | 'jpeg';
+    quality?: number;
+    fullPage?: boolean;
+    clip?: { x: number; y: number; width: number; height: number };
+  } = {}): Promise<ApiResponse<string>> {
+    if (!this.isReady()) {
+      return createErrorResponse(errorHandler.handleError(
+        ErrorCode.EXTENSION_ERROR,
+        'Puppeteer not initialized',
+        null,
+        'PuppeteerFallback'
+      ));
+    }
+
+    return await errorHandler.wrapAsync(
+      async () => {
+        // 等待頁面完全載入 - 更智能的等待策略
+        try {
+          // 首先等待DOM準備就緒
+          await this.page!.waitForSelector('body', { timeout: 10000 });
+          
+          // 然後等待一段時間讓資源載入，特別是圖片和CSS
+          await new Promise(resolve => setTimeout(resolve, 5000));
+          
+          // 嘗試等待頁面中的圖片載入完成
+          await this.page!.evaluate(() => {
+            return Promise.all(
+              Array.from(document.images)
+                .filter(img => !img.complete)
+                .map(img => new Promise(resolve => {
+                  img.onload = img.onerror = resolve;
+                  // 設置超時，避免永久等待
+                  setTimeout(resolve, 10000);
+                }))
+            );
+          });
+          
+        } catch (error) {
+          // 如果等待失敗，至少等待基本時間讓頁面渲染
+          console.warn('Page readiness check failed, using fallback timing');
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+        
+        const screenshotOptions: any = {
+          type: options.format || 'png',
+          encoding: 'base64',
+          fullPage: options.fullPage || false
+        };
+
+        if (options.format === 'jpeg' && options.quality) {
+          screenshotOptions.quality = options.quality;
+        }
+
+        if (options.clip) {
+          screenshotOptions.clip = options.clip;
+        }
+
+        const screenshot = await this.page!.screenshot(screenshotOptions);
+        
+        return screenshot as string;
+      },
+      ErrorCode.EXTENSION_ERROR,
+      'Failed to take screenshot',
+      'PuppeteerFallback',
+      90000 // 90 seconds timeout for screenshots
+    );
+  }
 }
