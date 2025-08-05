@@ -471,6 +471,22 @@ export class SmartFallbackManager {
   }
 
   /**
+   * 取得頁面截圖
+   */
+  async takeScreenshot(options: {
+    format?: 'png' | 'jpeg';
+    quality?: number;
+    fullPage?: boolean;
+    clip?: { x: number; y: number; width: number; height: number };
+  } = {}): Promise<ApiResponse<string>> {
+    return this.executeOperation(
+      'takeScreenshot',
+      () => this.sendExtensionMessage('browser_screenshot', {}),
+      () => this.puppeteerFallback.takeScreenshot(options)
+    );
+  }
+
+  /**
    * 健康檢查
    */
   async healthCheck(): Promise<{
